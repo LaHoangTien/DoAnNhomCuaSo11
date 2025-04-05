@@ -204,19 +204,19 @@ let newEpisodesAdded = false;
 // });
 
 // // Hẹn giờ để cập nhật các phim hiện có trong cơ sở dữ liệu mỗi ngày vào lúc 3 giờ sáng
-cron.schedule('51 8 * * *', async () => {
-    console.log('⏰ Running scheduled task to update existing movies from database');
-    try {
-        const [movies] = await db.promise().query("SELECT slug FROM movies WHERE status != 'completed'");
+// cron.schedule('51 8 * * *', async () => {
+//     console.log('⏰ Running scheduled task to update existing movies from database');
+//     try {
+//         const [movies] = await db.promise().query("SELECT slug FROM movies WHERE status != 'completed'");
 
-        // Chạy cập nhật song song
-        await Promise.all(movies.map(movie => addMovie(movie.slug)));
+//         // Chạy cập nhật song song
+//         await Promise.all(movies.map(movie => addMovie(movie.slug)));
 
-        console.log('✅ All movies updated successfully');
-    } catch (error) {
-        console.error('❌ Error updating movies from database:', error);
-    }
-});
+//         console.log('✅ All movies updated successfully');
+//     } catch (error) {
+//         console.error('❌ Error updating movies from database:', error);
+//     }
+// });
 
 
 

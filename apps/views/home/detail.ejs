@@ -184,7 +184,7 @@
                             <i class="bi bi-chevron-down"></i>
                         </button>
                     </h3>
-                    <div class="episode-list" id="server-${index}" style="display: none;">
+                    <div class="episode-list" id="server-${index}" style="display: none; max-height: 400px; overflow-y: auto;">
                         ${episodes.join(' ')}
                     </div>
                 </div>`
@@ -230,7 +230,7 @@
                         
                         <h6>Thời lượng: <span class="movie-content">${movie.time}</span></h6>
                         <h6>Đạo diễn: <span class="movie-content">${directors}</span></h6>
-                        <h6>Danh mục: <a href="/filter?types=${movie.type}" class="btn-theme btn-theme-sm btn-white-brd text-uppercase">${typeText}</a>
+                        <h6>Danh mục: <a href="/filter?type=${movie.type}" class="btn-theme btn-theme-sm btn-white-brd text-uppercase">${typeText}</a>
                         ${countries} 
                         ${categories}</h6>
                         

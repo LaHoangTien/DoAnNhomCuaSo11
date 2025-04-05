@@ -121,14 +121,14 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             outline: none;
-            width: 350px;
+            width: 300px;
             transition: width 0.3s ease-in-out;
             background-color: #1e253a00;
             height: 40px;
         }
 
         #searchInput:focus {
-            width: 400px;
+            width: 350px;
         }
 
         #searchInput::placeholder {
@@ -304,7 +304,7 @@
             /* Ẩn phần dư */
             text-overflow: ellipsis;
             /* Thêm dấu "..." khi bị cắt */
-            max-width: 330px;
+            max-width: 290px;
             /* Đảm bảo không tràn container */
         }
 
@@ -319,7 +319,7 @@
             /* Ẩn phần dư */
             text-overflow: ellipsis;
             /* Thêm dấu "..." khi bị cắt */
-            max-width: 330px;
+            max-width: 290px;
             /* Đảm bảo không tràn container */
         }
 
@@ -617,9 +617,9 @@
                 let params = new URLSearchParams(window.location.search);
 
                 if (this.textContent.trim() === 'Phim Lẻ') {
-                    params.set('types', 'single');
+                    params.set('type', 'single');
                 } else if (this.textContent.trim() === 'Phim Bộ') {
-                    params.set('types', 'series');
+                    params.set('type', 'series');
                 } else if (this.closest('.js_nav-item').classList.contains('dropdown')) {
                     params.set('country', this.dataset.id);
                 }

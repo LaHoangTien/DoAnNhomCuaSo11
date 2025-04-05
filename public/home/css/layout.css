@@ -1260,7 +1260,7 @@ linear-gradient(to bottom, rgba(20, 20, 20, 0.13) 30%, rgb(20, 20, 20) 100%);
 }
 
 .swiper-button-prev:hover,
-.swiper-button-next:hover {
+.swiper-button-next:hover { 
   color: rgb(111, 111, 111) !important;
   /* Màu chữ */
 }
@@ -1611,13 +1611,13 @@ linear-gradient(to bottom, rgba(20, 20, 20, 0.13) 30%, rgb(20, 20, 20) 100%);
   justify-content: center;
   background-color: #1c1c1e; /* Màu nền tối */
   color: white;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 500;
   border-radius: 8px;
   padding: 12px 20px;
   text-decoration: none;
   transition: background 0.3s;
-  min-width: 120px; /* Độ rộng tối thiểu */
+  width: 138px; /* Độ rộng tối thiểu */
   text-align: center;
   margin: 5px; /* Khoảng cách giữa các nút */
   border: 1px solid transparent; /* Giữ nguyên hình dạng */

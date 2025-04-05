@@ -12,10 +12,7 @@ var db = mysql.createConnection({
     database: "movie_test"
 });
 const cookieParser = require("cookie-parser");
-db.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected to MySQL database!");
-});
+
 app.use(cookieParser()); // 👈 Thêm middleware này vào
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

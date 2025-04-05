@@ -50,10 +50,12 @@
             display: flex;
             align-items: center;
             font-weight: 600;
-            background: linear-gradient(45deg,  #8b89f5,#d286e4, #ffffff); /* Màu gradient */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: bold; /* Làm chữ đậm hơn */
+            background: linear-gradient(45deg, #8b89f5, #d286e4, #ffffff);
+            /* Màu gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            /* Làm chữ đậm hơn */
             margin-bottom: 0px;
         }
 
@@ -124,10 +126,12 @@
         #titleMovie .row h4 {
             margin: 0;
             font-weight: 600;
-            background: linear-gradient(45deg,  #8b89f5,#d286e4, #ffffff); /* Màu gradient */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: bold; /* Làm chữ đậm hơn */
+            background: linear-gradient(45deg, #8b89f5, #d286e4, #ffffff);
+            /* Màu gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            /* Làm chữ đậm hơn */
             text-shadow: #dbdbdb;
         }
     </style>
@@ -139,8 +143,9 @@
         <div class="container-fluid" id="imgbg">
             <div class="col-md-12 top-imgbg" style="margin-top: 70px;">
                 <div id="titleMovie"></div>
-                <div id="episode-iframe-container" >
-                    <iframe id="episode-iframe" style="border-radius: 20px;" width="100%" height="824px" frameborder="0" allowfullscreen></iframe>
+                <div id="episode-iframe-container">
+                    <iframe id="episode-iframe" style="border-radius: 20px;" width="100%" height="824px" frameborder="0"
+                        allowfullscreen></iframe>
                 </div>
             </div>
             <div class="carousel-inner" role="listbox" id="carousel-content">
@@ -194,6 +199,7 @@
 
                     loadEpisode(episodeUrl);
                     updateUrl(episodeSlug, serverName);
+                    document.querySelector('#episode-iframe')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
                     $('.episode-btn').removeClass('active');
                     $(this).addClass('active');
@@ -239,22 +245,22 @@
                         };
                         var statusText = statusMap[movie.status] || 'Unknown';
                         var directors = movie.directors.map(director => `${director.name}`).join(' ');
-                        // Nhóm tập theo server
-                      
+                        
+
                         var episodesByServer = {};
-            movie.episodes.forEach(episode => {
-                if (!episodesByServer[episode.server_name]) {
-                    episodesByServer[episode.server_name] = [];
-                }
-                episodesByServer[episode.server_name].push(
-                    `<a href="#" class="episode-btn" data-url="${episode.link_embed}" data-slug="${episode.slug}" data-server="${episode.server_name}">${episode.name}</a>`                );
-            });
+                        movie.episodes.forEach(episode => {
+                            if (!episodesByServer[episode.server_name]) {
+                                episodesByServer[episode.server_name] = [];
+                            }
+                            episodesByServer[episode.server_name].push(
+                                `<a href="#" class="episode-btn" data-url="${episode.link_embed}" data-slug="${episode.slug}" data-server="${episode.server_name}">${episode.name}</a>`);
+                        });
                         $(document).on('click', '.toggle-btn', function () {
                             const targetId = $(this).attr('data-target');
                             $("#" + targetId).slideToggle();
                             $(this).find("i").toggleClass("bi-chevron-down bi-chevron-up");
                         });
-                        // Tạo HTML danh sách tập theo server
+                        
                         var episodesHtml = Object.entries(episodesByServer).map(([serverName, episodes], index) =>
                             `<div class="server-group">
                                 <h3>Server: ${serverName} 
@@ -262,7 +268,7 @@
                                         <i class="bi bi-chevron-down"></i>
                                     </button>
                                 </h3>
-                                <div class="episode-list" id="server-${index}" style="display: none;">
+                                <div class="episode-list" id="server-${index}" style="display: none; max-height: 400px; overflow-y: auto;">
                                     ${episodes.join(' ')}
                                 </div>
                             </div>`
@@ -290,7 +296,7 @@
                                     
                                     <h6>Thời lượng: <span class="movie-content">${movie.time}</span></h6>
                                     <h6>Đạo diễn: <span class="movie-content">${directors}</span></h6>
-                                    <h6>Danh mục: <a href="/filter?types=${movie.type}" class="btn-theme btn-theme-sm btn-white-brd text-uppercase">${typeText}</a>
+                                    <h6>Danh mục: <a href="/filter?type=${movie.type}" class="btn-theme btn-theme-sm btn-white-brd text-uppercase">${typeText}</a>
                                     ${countries} 
                                     ${categories}</h6>
                                     

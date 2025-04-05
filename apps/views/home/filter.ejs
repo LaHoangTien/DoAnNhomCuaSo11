@@ -160,55 +160,38 @@
 
         .pagination {
             display: flex;
+            align-items: center;
             justify-content: center;
-            margin-top: 20px;
+            gap: 5px;
         }
 
-        .pagination button {
-            margin: 0 5px;
-            padding: 10px 20px;
+        #nextPage,
+        #prevPage {
+            padding: 5px 10px;
+            background: white;
             border: none;
-            background-color: #007bff;
-            color: white;
+            border-radius: 5px;
             cursor: pointer;
         }
 
-        .pagination button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+        .page-numbers button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            background: white;
+            border: none;
+            border-radius: 5px;
         }
-        .pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-}
 
-.page-numbers button {
-    padding: 5px 10px;
-    margin: 0 2px;
-    border: 1px solid #ccc;
-    background: white;
-    cursor: pointer;
-}
+        .page-numbers button.active {
+            background-color: rgb(150, 149, 149);
 
-.page-numbers button.active {
-    background: blue;
-    color: white;
-    font-weight: bold;
-}
-
-.page-numbers span {
-    padding: 5px;
-    font-weight: bold;
-}
-
+        }
     </style>
 </head>
 
 <body id="body" data-spy="scroll" data-target=".header">
     <%- include('partical/header'); %>
-       
+
         <div class="container-fluid" style="padding-top: 100px;">
             <h1><i class="bi bi-filter-square"></i>
                 Lọc Phim</h1>
@@ -372,6 +355,18 @@
 
             });
 
+            const typeMap = {
+                'tvshows': 'TV shows',
+                'hoathinh': 'Hoạt hình',
+                'series': 'Phim bộ',
+                'single': 'Phim lẻ'
+            };
+
+            const statusMap = {
+                'ongoing': 'Đang chiếu',
+                'trailer': 'Sắp chiếu',
+                'completed': 'Hoàn tất'
+            };
 
             document.addEventListener('DOMContentLoaded', function () {
                 fetch('/api/movies/filters')
@@ -437,13 +432,13 @@
             function getURLParams() {
                 const urlParams = new URLSearchParams(window.location.search);
                 return {
-                    keyword: urlParams.get('keyword') || '',  // Giữ lại keyword từ URL
+                    keyword: urlParams.get('keyword') || '',
                     genre: urlParams.get('genre') || '',
                     country: urlParams.get('country') || '',
                     actor: urlParams.get('actor') || '',
                     director: urlParams.get('director') || '',
-                    year: urlParams.get('years') || '',
-                    type: urlParams.get('types') || '',
+                    year: urlParams.get('year') || '',
+                    type: urlParams.get('type') || '',
                     sortBy: urlParams.get('sortBy') || 'modified_time',
                     page: urlParams.get('page') || 1,
                     limit: urlParams.get('limit') || 24
@@ -455,97 +450,112 @@
                 const newParams = new URLSearchParams(params);
                 history.pushState(null, '', `/filter?${newParams.toString()}`);
             }
-            const typeMap = {
-                'tvshows': 'TV shows',
-                'hoathinh': 'Hoạt hình',
-                'series': 'Phim bộ',
-                'single': 'Phim lẻ'
-            };
 
-            const statusMap = {
-                'ongoing': 'Đang chiếu',
-                'trailer': 'Sắp chiếu',
-                'completed': 'Hoàn tất'
-            };
-
-          let currentPage = 1;
+            let currentPage = 1;
             const limit = 24;
             function loadMovies() {
-    const params = getURLParams();
-    fetch(`/api/movies/filter?${new URLSearchParams(params).toString()}`)
-        .then(response => response.json())
-        .then(data => {
-            const moviesDiv = document.getElementById('movies');
-            moviesDiv.innerHTML = '';
+                const params = getURLParams();
+                fetch(`/api/movies/filter?${new URLSearchParams(params).toString()}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const moviesDiv = document.getElementById('movies');
+                        moviesDiv.innerHTML = '';
 
-            if (data.movies.length) {
-                const moviesGrid = document.createElement('div');
-                moviesGrid.className = 'movies-grid';
-                data.movies.forEach(movie => {
-                    const movieDiv = document.createElement('div');
-                    movieDiv.className = 'movie';
-                    movieDiv.innerHTML = `
-                        <a href="/phim/${movie.slug}">
-                            <div class="movie-card">
-                                <img class="img-responsive" style="height: 270px;" src="${movie.thumb_url}" alt="${movie.name}">
-                                <div class="movie-detail-placeholder"></div>
-                            </div>
-                            <div class="text-center">
-                                <h5><a href="/phim/${movie.slug}">${movie.name}</a></h5>
-                            </div>
-                        </a>
-                    `;
-                    moviesGrid.appendChild(movieDiv);
-                });
-                moviesDiv.appendChild(moviesGrid);
+                        if (data.movies.length) {
+                            const moviesGrid = document.createElement('div');
+                            moviesGrid.className = 'movies-grid';
+                            data.movies.forEach(movie => {
+                                const movieDiv = document.createElement('div');
+                                movieDiv.className = 'movie';
+                                movieDiv.innerHTML = `
+                                    <a href="/phim/${movie.slug}">
+                                        <div class="movie-card">
+                                            <img class="img-responsive" style="height: 270px;" src="${movie.thumb_url}" alt="${movie.name}">
+                                            <div class="movie-detail-placeholder"></div>
+                                        </div>
+                                        <div class="text-center">
+                                            <h5><a href="/phim/${movie.slug}">${movie.name}</a></h5>
+                                        </div>
+                                    </a>
+                                `;
+                                moviesGrid.appendChild(movieDiv);
+                            });
+                            moviesDiv.appendChild(moviesGrid);
+                        }
+
+                        updatePagination(data.totalPage, params.page);
+                    })
+                    .catch(error => console.error('Error:', error));
             }
-
-            updatePagination(data.totalPage, params.page);
-        })
-        .catch(error => console.error('Error:', error));
-}
 
             function updatePagination(totalPage, currentPage) {
                 const pageNumbersDiv = document.querySelector('.page-numbers');
                 pageNumbersDiv.innerHTML = '';
 
+                // Giới hạn giá trị currentPage
+                currentPage = Math.max(1, Math.min(currentPage, totalPage));
+
+                // Helper tạo nút trang
                 function createPageButton(page) {
                     const pageBtn = document.createElement('button');
                     pageBtn.textContent = page;
                     pageBtn.className = page === currentPage ? 'active' : '';
                     pageBtn.addEventListener('click', () => {
-                        const params = getURLParams();
-                        params.page = page;
-                        updateURL(params);
-                        loadMovies();
+                        if (page !== currentPage) {
+                            const params = getURLParams();
+                            params.page = page;
+                            updateURL(params);
+                            loadMovies();
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
                     });
                     return pageBtn;
                 }
 
-                if (totalPage <= 5) {
-                    for (let i = 1; i <= totalPage; i++) {
-                        pageNumbersDiv.appendChild(createPageButton(i));
-                    }
-                } else {
-                    if (currentPage > 3) {
-                        pageNumbersDiv.appendChild(createPageButton(1));
-                        if (currentPage > 4) pageNumbersDiv.appendChild(document.createTextNode(" ... "));
-                    }
+                // Hiển thị khi không có trang nào
+                if (totalPage <= 1) return;
 
-                    let start = Math.max(2, currentPage - 1);
-                    let end = Math.min(totalPage - 1, currentPage + 1);
-                    for (let i = start; i <= end; i++) {
-                        pageNumbersDiv.appendChild(createPageButton(i));
-                    }
+                // Tạo danh sách trang cần hiển thị
+                const pages = new Set();
 
-                    if (currentPage < totalPage - 2) {
-                        if (currentPage < totalPage - 3) pageNumbersDiv.appendChild(document.createTextNode(" ... "));
-                        pageNumbersDiv.appendChild(createPageButton(totalPage));
-                    }
+                pages.add(1); // Trang đầu
+                pages.add(totalPage); // Trang cuối
+
+                // Các trang quanh currentPage
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                    if (i > 1 && i < totalPage) pages.add(i);
                 }
 
-                document.getElementById('prevPage').disabled = currentPage <= 1;
-                document.getElementById('nextPage').disabled = currentPage >= totalPage;
+                // Nếu currentPage gần đầu
+                if (currentPage <= 3) {
+                    for (let i = 2; i <= Math.min(4, totalPage - 1); i++) pages.add(i);
+                }
+
+                // Nếu currentPage gần cuối
+                if (currentPage >= totalPage - 2) {
+                    for (let i = totalPage - 3; i >= 2; i--) pages.add(i);
+                }
+
+                // Chuyển thành mảng & sắp xếp
+                const sortedPages = Array.from(pages).sort((a, b) => a - b);
+
+                // Hiển thị các nút trang + dấu "..."
+                let lastPage = 0;
+                for (let page of sortedPages) {
+                    if (page - lastPage > 1) {
+                        const dots = document.createElement('span');
+                        dots.textContent = '...';
+                        pageNumbersDiv.appendChild(dots);
+                    }
+                    pageNumbersDiv.appendChild(createPageButton(page));
+                    lastPage = page;
+                }
+
+                // Bật/tắt Prev & Next
+                const prevBtn = document.getElementById('prevPage');
+                const nextBtn = document.getElementById('nextPage');
+                if (prevBtn) prevBtn.disabled = currentPage <= 1;
+                if (nextBtn) nextBtn.disabled = currentPage >= totalPage;
             }
 
             document.getElementById('prevPage').addEventListener('click', function () {
@@ -554,6 +564,7 @@
                     params.page--;
                     updateURL(params);
                     loadMovies();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             });
 
@@ -562,6 +573,7 @@
                 params.page++;
                 updateURL(params);
                 loadMovies();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             document.getElementById('filterButton').addEventListener('click', function () {
                 let params = new URLSearchParams(window.location.search);
@@ -569,8 +581,8 @@
                 const selectedParams = {
                     genre: Array.from(document.querySelectorAll('#genre-options button.selected')).map(btn => btn.dataset.slug).join(','),
                     country: Array.from(document.querySelectorAll('#country-options button.selected')).map(btn => btn.dataset.slug).join(','),
-                    years: Array.from(document.querySelectorAll('#year-options button.selected')).map(button => button.dataset.id).join(','),
-                    types: Array.from(document.querySelectorAll('#type-options button.selected')).map(button => button.dataset.id).join(',')
+                    year: Array.from(document.querySelectorAll('#year-options button.selected')).map(button => button.dataset.id).join(','),
+                    type: Array.from(document.querySelectorAll('#type-options button.selected')).map(button => button.dataset.id).join(',')
                 };
 
                 // Chỉ cập nhật sortBy nếu đã chọn

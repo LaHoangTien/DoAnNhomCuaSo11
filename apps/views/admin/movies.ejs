@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý phim</title>
+    <link rel="shortcut icon" type="image/png" href="../static/admin/assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../static/admin/assets/css/styles.min.css" />
+    <style>
+        .episode-dropdown {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .episode-dropdown a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .episode-dropdown a:hover {
+            background-color: #f1f1f1
+        }
+
+        .movie-info {
+            font-weight: bold;
+            max-width: 300px;
+            /* Giới hạn chiều ngang */
+            word-wrap: break-word;
+            /* Tự động xuống dòng khi vượt quá chiều rộng */
+            white-space: normal;
+            /* Cho phép xuống dòng */
+        }
+
+        .movie-origin-name {
+            font-size: 0.9em;
+            color: gray;
+            max-width: 300px;
+            /* Giới hạn chiều ngang */
+            word-wrap: break-word;
+            /* Tự động xuống dòng khi vượt quá chiều rộng */
+            white-space: normal;
+        }
+
+        .movie-type,
+        .movie-status {
+            display: inline-block;
+            margin-right: 5px;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.8em;
+        }
+
+        .movie-type {
+            background-color: #f05858;
+            color: #f1f1f1;
+        }
+
+        .movie-type.hoathinh {
+            background-color: #f05858;
+            color: #f1f1f1;
+        }
+
+        .movie-type.tvshows {
+            background-color: #58e6f0;
+            color: #f1f1f1;
+        }
+
+        .movie-type.series {
+            background-color: #ee94e2;
+            color: #f1f1f1;
+        }
+
+        .movie-type.single {
+            background-color: #5892f0;
+            color: #f1f1f1;
+        }
+
+        .movie-status {
+            background-color: #7bfac1;
+        }
+
+        .movie-status.ongoing {
+            background-color: #f8e092;
+        }
+
+        .movie-status.trailer {
+            background-color: #f8d7da;
+        }
+        .category-cell {
+    max-width: 200px; /* Giới hạn chiều rộng */
+    word-wrap: break-word;
+            /* Tự động xuống dòng khi vượt quá chiều rộng */
+            white-space: normal;
+            /* Cho phép xuống dòng */
+}
+#movie-table-body tr{
+    height: 140px
+}
+        #pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            /* Khoảng cách giữa các nút */
+        }
+    </style>
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <!-- Sidebar Start -->
+        <%- include('partical/menu'); %>
+            <!--  Sidebar End -->
+            <!--  Main wrapper -->
+            <div class="body-wrapper">
+                <!--  Header Start -->
+                <%- include('partical/header'); %>
+                    <!--  Header End -->
+                    <div class="container-fluid">
+                        <!--  Movie Management Table -->
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="card">
+                                    <div class="card-body" >
+                                        <h5 class="card-title fw-semibold mb-4">Quản lý phim</h5>
+                                        <div class="table-responsive" >
+                                            <table class="table text-nowrap mb-0 align-middle">
+                                                <thead class="text-dark fs-4">
+                                                    <tr>
+                                                        <th class="border-bottom-0">
+                                                            <h6 class="fw-semibold mb-0">Thông tin</h6>
+                                                        </th>
+                                                        <th class="border-bottom-0">
+                                                            <h6 class="fw-semibold mb-0">Hình ảnh</h6>
+                                                        </th>
+                                                        <th class="border-bottom-0">
+                                                            <h6 class="fw-semibold mb-0">Thể loại</h6>
+                                                        </th>
+                                                        <th class="border-bottom-0">
+                                                            <h6 class="fw-semibold mb-0">Khu vực</h6>
+                                                        </th>
+                                                        <th class="border-bottom-0">
+                                                            <h6 class="fw-semibold mb-0">Hành động</h6>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="movie-table-body">
+                                                    <!-- Movie rows will be inserted here by JavaScript -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div id="pagination" class="mt-3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="py-6 px-6 text-center">
+                            <p class="mb-0 fs-4">Design and Developed by <a href="https://adminmart.com/"
+                                    target="_blank"
+                                    class="pe-1 text-primary text-decoration-underline">AdminMart.com</a> Distributed by
+                                <a href="https://themewagon.com">ThemeWagon</a>
+                            </p>
+                        </div>
+                    </div>
+            </div>
+    </div>
+    <script src="../static/admin/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="../static/admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/admin/assets/js/sidebarmenu.js"></script>
+    <script src="../static/admin/assets/js/app.min.js"></script>
+    <script src="../static/admin/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../static/admin/assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../static/admin/assets/js/dashboard.js"></script>
+    <script>
+        let currentPage = parseInt(new URLSearchParams(window.location.search).get("page")) || 1;
+        const limit = 10;
+
+        function fetchMovies(page = 1, updateURL = true) {
+            currentPage = page; // Cập nhật trang hiện tại
+
+            fetchWithAuth(`/api/admin/movies?page=${page}&limit=${limit}`)
+                .then(response => response.json())
+                .then(data => {
+                    renderMovies(data.movies);
+                    renderPagination(data.page, data.totalPages);
+
+                    // Cập nhật URL khi chuyển trang
+                    if (updateURL) {
+                        history.pushState({ page }, "", `/admin/movies?page=${page}`);
+                    }
+                })
+                .catch(error => console.error("Lỗi khi lấy dữ liệu phim:", error));
+        }
+
+
+        function renderMovies(movies) {
+            const container = document.getElementById("movie-table-body");
+            container.innerHTML = ''; // Xóa nội dung cũ trước khi thêm mới
+
+            movies.forEach(movie => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+            <td>
+                <div class="movie-info">${movie.name} [${movie.year}]</div>
+                <div class="movie-origin-name">${movie.origin_name}</div>
+                <div class="movie-type ${movie.type}">${getTypeLabel(movie.type)}</div>
+                <div class="movie-status ${movie.status}">${getStatusLabel(movie.status)}</div>
+            </td>
+            <td><img src="${movie.poster_url}" alt="${movie.name}" width="100"></td>
+            <td class="category-cell">${movie.categories.map(category => category.name).join(', ')}</td>            <td>${movie.countries.map(country => country.name).join(', ')}</td>
+            <td>
+                <button class="btn btn-primary" onclick="toggleEpisodes('${movie.id}')">Xem tập</button>
+                
+                <button class="btn btn-danger" onclick="deleteMovie('${movie.id}')">Xóa</button>
+                <div id="episodes-${movie.id}" class="episode-dropdown"></div>
+            </td>
+        `;
+                container.appendChild(row);
+            });
+        }
+
+        function renderPagination(current, totalPages) {
+            const paginationContainer = document.getElementById("pagination");
+            paginationContainer.innerHTML = ''; // Xóa phân trang cũ
+
+            // Nút "Prev"
+            if (current > 1) {
+                const prevBtn = document.createElement("button");
+                prevBtn.textContent = "Prev";
+                prevBtn.className = "btn btn-secondary";
+                prevBtn.onclick = () => fetchMovies(current - 1);
+                paginationContainer.appendChild(prevBtn);
+            }
+
+            // Hiển thị các nút trang
+            const maxVisiblePages = 5; // Số lượng trang hiển thị tối đa
+            let startPage = Math.max(1, current - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            if (startPage > 1) {
+                const firstPageBtn = document.createElement("button");
+                firstPageBtn.textContent = "1";
+                firstPageBtn.className = "btn btn-secondary";
+                firstPageBtn.onclick = () => fetchMovies(1);
+                paginationContainer.appendChild(firstPageBtn);
+
+                if (startPage > 2) {
+                    const dots = document.createElement("span");
+                    dots.textContent = "...";
+                    dots.className = "mx-2";
+                    paginationContainer.appendChild(dots);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const btn = document.createElement("button");
+                btn.textContent = i;
+                btn.className = `btn ${i === current ? 'btn-primary' : 'btn-secondary'}`;
+                btn.onclick = () => fetchMovies(i);
+                paginationContainer.appendChild(btn);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const dots = document.createElement("span");
+                    dots.textContent = "...";
+                    dots.className = "mx-2";
+                    paginationContainer.appendChild(dots);
+                }
+
+                const lastPageBtn = document.createElement("button");
+                lastPageBtn.textContent = totalPages;
+                lastPageBtn.className = "btn btn-secondary";
+                lastPageBtn.onclick = () => fetchMovies(totalPages);
+                paginationContainer.appendChild(lastPageBtn);
+            }
+
+            // Nút "Next"
+            if (current < totalPages) {
+                const nextBtn = document.createElement("button");
+                nextBtn.textContent = "Next";
+                nextBtn.className = "btn btn-secondary";
+                nextBtn.onclick = () => fetchMovies(current + 1);
+                paginationContainer.appendChild(nextBtn);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchMovies(currentPage, false); // Không cập nhật URL khi tải trang lần đầu
+        });
+
+        // Xử lý khi nhấn nút "Quay lại" trên trình duyệt
+        window.onpopstate = function (event) {
+            const page = event.state?.page || 1;
+            fetchMovies(page, false); // Không cập nhật URL khi dùng Back/Forward
+        };
+
+        function getTypeLabel(type) {
+            switch (type) {
+                case 'series': return 'Phim bộ';
+                case 'single': return 'Phim lẻ';
+                case 'tvshows': return 'TV Shows';
+                case 'hoathinh': return 'Hoạt hình';
+                default: return '';
+            }
+        }
+
+        function getStatusLabel(status) {
+            switch (status) {
+                case 'ongoing': return 'Đang chiếu';
+                case 'completed': return 'Hoàn thành';
+                case 'trailer': return 'Sắp chiếu';
+                default: return '';
+            }
+        }
+
+        function toggleEpisodes(movieId) {
+            const dropdown = document.getElementById(`episodes-${movieId}`);
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            } else {
+                fetchWithAuth(`/api/admin/movies/${movieId}`)
+                    .then(response => response.json())
+                    .then(movie => {
+                        dropdown.innerHTML = '';
+                        if (movie.episodes && movie.episodes.length > 0) {
+                            movie.episodes.forEach(episode => {
+                                const link = document.createElement("a");
+                                link.href = episode.link_embed;
+                                link.target = "_blank";
+                                link.textContent = `${episode.name}`;
+                                dropdown.appendChild(link);
+                            });
+                        } else {
+                            dropdown.innerHTML = '<a>Không có tập nào</a>';
+                        }
+                        dropdown.style.display = "block";
+                    })
+                    .catch(error => console.error("Lỗi khi lấy dữ liệu tập phim:", error));
+            }
+        }
+
+        function editMovie(movieId) {
+            window.location.href = `/admin/movies/edit/${movieId}`;
+        }
+
+        function deleteMovie(movieId) {
+            if (confirm("Bạn có chắc chắn muốn xóa phim này không?")) {
+                fetchWithAuth(`/api/delete/movies/${movieId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        fetchMovies(currentPage); // Giữ nguyên trang hiện tại sau khi xóa
+                    })
+                    .catch(error => console.error("Lỗi khi xóa phim:", error));
+            }
+        }
+
+        document.addEventListener("click", function (event) {
+            const dropdowns = document.querySelectorAll(".episode-dropdown");
+            dropdowns.forEach(dropdown => {
+                if (!dropdown.contains(event.target) && !event.target.matches(".btn.btn-primary")) {
+                    dropdown.style.display = "none";
+                }
+            });
+        });
+
+        function fetchWithAuth(url, options = {}) {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                console.error("❌ No token found in localStorage.");
+                return Promise.reject("No token provided.");
+            }
+
+            if (!options.headers) {
+                options.headers = {};
+            }
+
+            options.headers["Authorization"] = `Bearer ${token}`;
+            console.log("📤 Sending Request with Token:", token); // Debug
+
+            return fetch(url, options);
+        }
+
+
+
+    </script>
+</body>
+
+</html>

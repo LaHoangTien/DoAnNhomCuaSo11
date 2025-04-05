@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+
+<head>
+    <meta charset="utf-8" />
+    <title>FlameOnePage Free Template by FairTech</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="FlameOnePage freebie theme for web startups by FairTech SEO." name="description" />
+    <meta content="FairTech" name="author" />
+    <link href="http://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet" type="text/css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="/static/home/vendor/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/animate.css" rel="stylesheet">
+    <link href="/static/home/vendor/swiper/css/swiper.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/layout.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/layout.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="shortcut icon" href="favicon.ico" />
+    <style>
+        .carousel-centered span {
+            font-size: 17px;
+            font-weight: 400;
+            font-family: Hind, sans-serif;
+            color: #dbdbdb;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .detail-poster {
+            position: relative;
+            display: inline-block;
+            border-radius: 6px;
+            overflow: hidden;
+            width: 100%;
+            box-shadow: 0 0 20px #9b9493;
+        }
+
+        .detail-poster img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            background: linear-gradient(45deg,  #8b89f5,#d286e4, #ffffff); /* Màu gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold; /* Làm chữ đậm hơn */
+            margin-bottom: 0px;
+        }
+
+        .title-row h5,
+        .title-row h6 {
+            margin: 0;
+            padding: 0;
+        }
+
+        .title-row h6 {
+            margin-left: 4px;
+            padding: 0;
+        }
+
+
+
+        .item-detail {
+            position: relative;
+            background-size: cover;
+            background-position: top;
+        }
+
+        /* Thêm lớp phủ */
+        .item-detail::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at center, rgba(0, 0, 0, 0.137) 30%, rgb(0, 0, 0) 100%),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.136) 90%, rgb(0, 0, 0) 100%);
+            z-index: 1;
+            /* Nằm dưới nội dung */
+        }
+
+
+
+        #titleMovie .row {
+            display: flex;
+            align-items: center;
+            /* Căn giữa theo chiều dọc */
+            gap: 10px;
+            /* Tạo khoảng cách giữa icon và chữ */
+            margin-left: 20px;
+        }
+
+        #titleMovie .row a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            /* Bỏ gạch chân */
+        }
+
+        #titleMovie .row i:hover {
+            color: #d286e4;
+
+        }
+
+        #titleMovie .row i {
+            font-size: 30px;
+            /* Kích thước icon */
+            color: #ffffff;
+            /* Màu icon */
+        }
+
+        #titleMovie .row h4 {
+            margin: 0;
+            font-weight: 600;
+            background: linear-gradient(45deg,  #8b89f5,#d286e4, #ffffff); /* Màu gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold; /* Làm chữ đậm hơn */
+            text-shadow: #dbdbdb;
+        }
+    </style>
+</head>
+
+<body id="body" data-spy="scroll" data-target=".header">
+    <%- include('partical/header'); %>
+
+        <div class="container-fluid" id="imgbg">
+            <div class="col-md-12 top-imgbg" style="margin-top: 70px;">
+                <div id="titleMovie"></div>
+                <div id="episode-iframe-container" >
+                    <iframe id="episode-iframe" style="border-radius: 20px;" width="100%" height="824px" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="carousel-inner" role="listbox" id="carousel-content">
+                <!-- Carousel items will be injected here by JavaScript -->
+            </div>
+        </div>
+
+        <div id="about" class="bg-dark">
+            <div class="container-fluid">
+                <div class="row" id="detailContent">
+                    <!-- Nội dung chi tiết sẽ được chèn vào đây bằng JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <a href="javascript:void(0);" class="js-back-to-top back-to-top">Top</a>
+
+        <script src="/static/home/vendor/jquery.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery-migrate.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery.easing.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery.back-to-top.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery.smooth-scroll.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery.wow.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/swiper/js/swiper.jquery.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/masonry/jquery.masonry.pkgd.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/masonry/imagesloaded.pkgd.min.js" type="text/javascript"></script>
+        <script src="/static/home/js/layout.min.js" type="text/javascript"></script>
+        <script src="/static/home/js/components/wow.min.js" type="text/javascript"></script>
+        <script src="/static/home/js/components/swiper.min.js" type="text/javascript"></script>
+        <script>
+            $(document).ready(function () {
+                const pathSegments = window.location.pathname.split('/');
+                const movieSlug = pathSegments[2];
+                const episodeSlug = pathSegments[3] || '';
+                const serverName = decodeURIComponent(pathSegments[4] || '');
+
+                function loadEpisode(episodeUrl) {
+                    $('#episode-iframe').attr('src', episodeUrl);
+                }
+
+                function updateUrl(episodeSlug, serverName) {
+                    const newUrl = `/xem/${movieSlug}/${episodeSlug}/${encodeURIComponent(serverName)}`;
+                    history.pushState(null, '', newUrl);
+                }
+                $(document).on('click', '.episode-btn', function (e) {
+                    e.preventDefault();
+                    const episodeUrl = $(this).data('url');
+                    const episodeSlug = $(this).data('slug');
+                    const serverName = $(this).data('server');
+
+                    loadEpisode(episodeUrl);
+                    updateUrl(episodeSlug, serverName);
+
+                    $('.episode-btn').removeClass('active');
+                    $(this).addClass('active');
+                });
+
+                $.ajax({
+                    url: `/api/movies/${movieSlug}`,
+                    method: 'GET',
+                    success: function (movie) {
+                        var episode = movie.episodes.find(ep => ep.slug === episodeSlug && ep.server_name === serverName);
+                        if (episode) {
+                            loadEpisode(episode.link_embed);
+                        }
+                        $('#imgbg').css({
+                            'background-image': `url(${movie.poster_url})`,
+                            'background-size': 'cover',
+                            'background-position': 'center',
+                            'background-repeat': 'no-repeat'
+                        });
+                        var categories = movie.categories.map(category =>
+                            `<a href="/filter?genre=${category.slug}" class="btn-theme btn-theme-sm btn-white-brd">${category.name}</a>`
+                        ).join(' ');
+
+                        var countries = movie.countries.map(country =>
+                            `<a href="/filter?country=${country.slug}" class="btn-theme btn-theme-sm btn-white-brd">${country.name}</a>`
+                        ).join(' ');
+
+                        var actors = movie.actors.map(actor =>
+                            `<a href="/filter?actor=${actor.name}" class="btn-theme btn-theme-sm btn-white-brd">${actor.name}</a>`
+                        ).join(' ');
+                        var typeMap = {
+                            'tvshows': 'TV shows',
+                            'hoathinh': 'Hoạt hình',
+                            'series': 'Phim bộ',
+                            'single': 'Phim lẻ'
+                        };
+                        var typeText = typeMap[movie.type] || 'Unknown';
+
+                        var statusMap = {
+                            'ongoing': 'Đang chiếu',
+                            'trailer': 'Sắp chiếu',
+                            'completed': 'Hoàn tất'
+                        };
+                        var statusText = statusMap[movie.status] || 'Unknown';
+                        var directors = movie.directors.map(director => `${director.name}`).join(' ');
+                        // Nhóm tập theo server
+                      
+                        var episodesByServer = {};
+            movie.episodes.forEach(episode => {
+                if (!episodesByServer[episode.server_name]) {
+                    episodesByServer[episode.server_name] = [];
+                }
+                episodesByServer[episode.server_name].push(
+                    `<a href="#" class="episode-btn" data-url="${episode.link_embed}" data-slug="${episode.slug}" data-server="${episode.server_name}">${episode.name}</a>`                );
+            });
+                        $(document).on('click', '.toggle-btn', function () {
+                            const targetId = $(this).attr('data-target');
+                            $("#" + targetId).slideToggle();
+                            $(this).find("i").toggleClass("bi-chevron-down bi-chevron-up");
+                        });
+                        // Tạo HTML danh sách tập theo server
+                        var episodesHtml = Object.entries(episodesByServer).map(([serverName, episodes], index) =>
+                            `<div class="server-group">
+                                <h3>Server: ${serverName} 
+                                    <button class="toggle-btn" data-target="server-${index}">
+                                        <i class="bi bi-chevron-down"></i>
+                                    </button>
+                                </h3>
+                                <div class="episode-list" id="server-${index}" style="display: none;">
+                                    ${episodes.join(' ')}
+                                </div>
+                            </div>`
+                        ).join('');
+
+                        var detailContent = `
+                                <div class="detail col-md-3 col-sm-4 md-margin-b-60">
+                                    <div class="detail-poster"><img src="${movie.thumb_url}"></div>
+                                    
+                                </div>
+                                <div class="episode col-md-9 col-sm-8 ">
+                                <!-- Accordion -->
+                                <div class="title">
+                                    <h4 id="movie-title" style="color:white;">${movie.name}</h4>
+                                    <div class="title-row">
+                                        <h5 id="movie-origin-name">${movie.origin_name}</h5>
+                                        <h6 id="movie-status">[${statusText}]</h6>
+                                    </div>
+                                </div>
+                                <div class="accordion" id="episodesContainer">
+                                    ${episodesHtml}
+                                </div>
+                                <div class="movie-categories">
+                                    <h6>Giới thiệu: <span class="movie-content">${movie.content}</span></h6>
+                                    
+                                    <h6>Thời lượng: <span class="movie-content">${movie.time}</span></h6>
+                                    <h6>Đạo diễn: <span class="movie-content">${directors}</span></h6>
+                                    <h6>Danh mục: <a href="/filter?types=${movie.type}" class="btn-theme btn-theme-sm btn-white-brd text-uppercase">${typeText}</a>
+                                    ${countries} 
+                                    ${categories}</h6>
+                                    
+                                    <h6>Diễn viên: ${actors}</h6>
+                                    
+                                </div>
+                                <!-- End Accordion -->
+                            </div>
+                        `;
+                        var titleMovie = `
+                            <div class="row">
+                                <a href="/phim/${movie.slug}">
+                                    <i class="bi bi-arrow-left-square"></i>
+                                </a>
+                                <h4 class="heading-sm page-name mb-0">Xem phim ${movie.name}</h4>
+                            </div>
+                        `;
+
+                        document.getElementById("detailContent").innerHTML = detailContent;
+                        document.getElementById("titleMovie").innerHTML = titleMovie;
+                        document.getElementById("episodesContainer").innerHTML = episodesHtml;
+
+                        // Xử lý sự kiện click vào tập phim
+                        // Xử lý sự kiện click vào tập phim
+                        $('.episode-btn').on('click', function (e) {
+                            e.preventDefault();
+
+                            var episodeUrl = $(this).data('url');
+                            var episodeSlug = $(this).data('slug');
+                            var serverName = $(this).data('server');
+
+                            // Load tập phim
+                            loadEpisode(episodeUrl);
+                            updateUrl(episodeSlug, serverName);
+
+                            // Xóa lớp active của tất cả các nút
+                            $('.episode-btn').removeClass('active');
+
+                            // Thêm lớp active cho nút vừa click
+                            $(this).addClass('active');
+                        });
+
+                        // Khi trang tải lại, đánh dấu tập đang xem
+                        $(document).ready(function () {
+                            var currentEpisode = movie.episodes.find(ep => ep.slug === episodeSlug && ep.server_name === serverName);
+                            if (currentEpisode) {
+                                $('.episode-btn').each(function () {
+                                    if ($(this).data('slug') === episodeSlug && $(this).data('server') === serverName) {
+                                        $(this).addClass('active');
+                                    }
+                                });
+                            }
+                        });
+
+                    },
+                    error: function (err) {
+                        console.error('Error fetching movie details:', err);
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

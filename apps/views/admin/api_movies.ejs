@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API OPhim</title>
+    <link rel="shortcut icon" type="image/png" href="../static/admin/assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../static/admin/assets/css/styles.min.css" />
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <!-- Sidebar Start -->
+        <%- include('partical/menu'); %>
+        <!--  Sidebar End -->
+        <!--  Main wrapper -->
+        <div class="body-wrapper">
+            <!--  Header Start -->
+            <%- include('partical/header'); %>
+            <!--  Header End -->
+            <div class="container-fluid">
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-body">
+                            <h1>Danh sách phim mới cập nhật</h1>
+                            <div class="container mt-4">
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <input type="text" id="search-query" class="form-control"
+                                               placeholder="Nhập tên hoặc slug phim..."/>
+                                    </div>
+                                </div>
+                                <div id="loading-indicator"
+                                     style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p>Đang thêm phim, vui lòng đợi...</p>
+                                </div>
+                                <div id="movie-list"></div>
+                                <div id="movie-popup" class="popup" style="display: none;">
+                                    <div class="popup-content">
+                                        <span id="close-popup" class="close-btn">&times;</span>
+                                    </div>
+                                </div>
+                                <div id="pagination" class="pagination-container"></div>
+                            </div>
+    
+    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../static/admin/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="../static/admin/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/admin/assets/js/sidebarmenu.js"></script>
+    <script src="../static/admin/assets/js/app.min.js"></script>
+    <script src="../static/admin/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../static/admin/assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../static/admin/assets/js/dashboard.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        let currentPage = 1;
+         let totalPages = 1;
+    
+         // Hàm fetch dữ liệu từ API sử dụng AJAX
+           function fetchMovies(page) {
+            const url = `https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=${page}`;
+    
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(data) {
+                    displayMovies(data.items, data.pathImage); // Hiển thị phim
+                    totalPages = data.pagination.totalPages; // Cập nhật tổng số trang
+                    createPagination(page, totalPages); // Tạo thanh phân trang
+                },
+                error: function(error) {
+                    console.error('Error fetching movies:', error);
+                    alert('Không thể tải dữ liệu!');
+                }
+            });
+        }
+     function fetchMovieDetails(slug) {
+        const url = `https://phimapi.com/phim/${slug}`;
+    
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) {
+                displayMovieDetails(data.movie, data.episodes); // Truyền thông tin phim và tập vào popup
+            },
+            error: function(error) {
+                console.error('Error fetching movie details:', error);
+                alert('Không thể tải chi tiết phim!');
+            }
+        });
+    }
+    
+    function addMovieAndEpisodesBySlug(slug) {
+        const url = `/api/kkphim/add/${slug}`;
+        const loader = $('#loading-indicator'); // Giả sử đây là một phần tử HTML dùng để hiển thị hiệu ứng loading
+    
+        // Hiển thị hiệu ứng khi bắt đầu
+        loader.show();
+    
+        $.ajax({
+            url: url,
+            type: 'POST',
+            success: function(response) {
+                // Ẩn hiệu ứng sau khi thêm thành công
+                loader.hide();
+            },
+            error: function(error) {
+                console.error('Có lỗi xảy ra:', error);
+    
+                // Ẩn hiệu ứng ngay cả khi lỗi
+                loader.hide();
+            }
+        });
+    }
+    
+    
+      function displayMovies(movies, pathImage = "") {
+        const movieList = $('#movie-list');
+        movieList.empty(); // Xóa dữ liệu cũ
+    
+        if (movies.length === 0) {
+            movieList.html("<p>Không tìm thấy phim nào phù hợp.</p>");
+            return;
+        }
+    
+        const table = $(`
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th style="width: 120px;">Thumbnail</th>
+                        <th>Tên phim</th>
+                        <th>Tên gốc</th>
+                        <th>Slug</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `);
+    
+        const tbody = table.find('tbody');
+    
+        movies.forEach(movie => {
+            const thumbUrl = movie.poster_url
+                ? (movie.poster_url.startsWith("http") ? movie.poster_url : `${pathImage}${movie.poster_url}`)
+                : "Không có hình ảnh";
+            const modifiedDate = movie.modified?.time
+                ? new Date(movie.modified.time).toLocaleString("vi-VN")
+                : "Không rõ";
+    
+            const row = $(`
+                <tr>
+                    <td class="text-center">
+                        <img src="${thumbUrl}" alt="${movie.name}" class="img-thumbnail" style="width: 100px; height: 150px; object-fit: cover;" />
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="movie-link" data-slug="${movie.slug}">
+                            ${movie.name}
+                        </a>
+                    </td>
+                    <td>${movie.origin_name || 'Không rõ'}</td>
+                    <td>${movie.slug || 'Không rõ'}</td>
+                    <td>${modifiedDate}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm add-movie-btn" data-slug="${movie.slug}">Thêm phim</button>
+                    </td>
+                </tr>
+            `);
+    
+            // Thêm sự kiện vào các nút
+            row.find('.movie-link').on('click', function() {
+                const slug = $(this).data('slug');
+                fetchMovieDetails(slug);
+            });
+    
+            row.find('.add-movie-btn').on('click', function() {
+                const slug = $(this).data('slug');
+                addMovieAndEpisodesBySlug(slug);
+            });
+    
+            tbody.append(row);
+        });
+    
+        movieList.append(table);
+    }
+    
+    
+    
+    function displayMovieDetails(movie, episodes) {
+        const popup = $('#movie-popup');
+        const popupContent = popup.find('.popup-content');
+    
+        // Chuẩn hóa thông tin cơ bản
+        const posterUrl = movie.thumb_url || "Không có hình ảnh";
+        const categories = movie.category?.map(c => c.name).join(", ") || "Không rõ";
+        const country = movie.country?.map(c => c.name).join(", ") || "Không rõ";
+        const actors = movie.actor?.join(", ") || "Không rõ";
+        const directors = movie.director?.join(", ") || "Không rõ";
+       const modifiedDate = movie.modified?.time
+            ? new Date(movie.modified.time).toISOString().replace('T', ' ').replace('Z', '') // Giữ nguyên thời gian UTC
+            : "Không rõ";
+    
+        // Thông tin phim
+        let movieDetails = `
+            <h2>${movie.name} (${movie.year || "Không rõ"})</h2>
+            <img src="${posterUrl}" alt="${movie.name}" class="img-thumbnail" style="width: 300px; height: auto;" />
+            <p><strong>Tên gốc:</strong> ${movie.origin_name || "Không rõ"}</p>
+            <p><strong>Danh mục:</strong> ${movie.type || "Không rõ"}</p>
+            <p><strong>Thể loại:</strong> ${categories}</p>
+            <p><strong>Quốc gia:</strong> ${country}</p>
+            <p><strong>Đạo diễn:</strong> ${directors}</p>
+            <p><strong>Diễn viên:</strong> ${actors}</p>
+            <p><strong>Trạng thái:</strong> ${movie.status || "Không rõ"}</p>
+            <p><strong>Thời lượng:</strong> ${movie.time || "Không rõ"}</p>
+            <p><strong>Tập hiện tại:</strong> ${movie.episode_current || "Không rõ"} / ${movie.episode_total || "Không rõ"}</p>
+            <p><strong>Chất lượng:</strong> ${movie.quality || "Không rõ"}</p>
+            <p><strong>Ngôn ngữ:</strong> ${movie.lang || "Không rõ"}</p>
+            <p><strong>Ngày cập nhật:</strong> ${modifiedDate}</p>
+            <p><strong>Mô tả:</strong> ${movie.content || "Không có mô tả."}</p>
+        `;
+        if (movie.trailer_url) {
+            movieDetails += `<p><strong>Trailer:</strong> <a href="${movie.trailer_url}" target="_blank">Xem trailer</a></p>`;
+        } else {
+            movieDetails += `<p><strong>Trailer:</strong> Không có trailer.</p>`;
+        }
+        // Danh sách tập phim
+        if (episodes && episodes.length > 0) {
+        let hasValidEpisodes = episodes[0].server_data.some(episode => episode.link_embed); // Kiểm tra xem có tập nào có link_embed hay không
+    
+        if (hasValidEpisodes) {
+            movieDetails += `<h3>Danh sách tập:</h3><ul>`;
+            episodes[0].server_data.forEach(episode => {
+                if (episode.link_embed) { // Chỉ thêm những tập có link_embed
+                    movieDetails += `
+                        <li>
+                            <strong>Tập ${episode.name}:</strong>
+                            <a href="${episode.link_embed}" target="_blank">Xem tập này</a>
+                        </li>`;
+                }
+            });
+            movieDetails += `</ul>`;
+        }
+    } else {
+        movieDetails += `<p><strong>Danh sách tập:</strong> trailer.</p>`;
+    }
+    
+    
+        // Hiển thị nội dung vào popup
+        popupContent.html(movieDetails);
+        popup.css('display', 'flex'); // Hiển thị popup
+    }
+    
+    // Đóng popup khi nhấn nút đóng hoặc ra ngoài vùng nội dung
+    $('#close-popup').on('click', function() {
+        $('#movie-popup').css('display', 'none');
+    });
+    $('#movie-popup').on('click', function(event) {
+        if (event.target === this) {
+            $(this).css('display', 'none');
+        }
+    });
+    
+    
+    
+    function createPagination(current, total) {
+        const pagination = $('#pagination');
+        pagination.empty();
+    
+        if (total <= 1) return;
+    
+        const range = 2; // Số trang hiển thị trước và sau trang hiện tại
+        const start = Math.max(1, current - range);
+        const end = Math.min(total, current + range);
+    
+        // Nút đầu tiên
+        if (start > 1) {
+            const firstButton = $(`<button data-page="1">1</button>`);
+            firstButton.on('click', function () {
+                fetchMovies(1);
+            });
+            pagination.append(firstButton);
+    
+            if (start > 2) {
+                pagination.append(`<button class="disabled">...</button>`);
+            }
+        }
+    
+        // Các nút trong khoảng
+        for (let i = start; i <= end; i++) {
+            const button = $(`<button class="${i === current ? 'active' : ''}" data-page="${i}">${i}</button>`);
+            button.on('click', function () {
+                fetchMovies(i);
+            });
+            pagination.append(button);
+        }
+    
+        // Nút cuối cùng
+        if (end < total) {
+            if (end < total - 1) {
+                pagination.append(`<button class="disabled">...</button>`);
+            }
+            const lastButton = $(`<button data-page="${total}">${total}</button>`);
+            lastButton.on('click', function () {
+                fetchMovies(total);
+            });
+            pagination.append(lastButton);
+        }
+    
+        // Nút Trang trước
+        const prevButton = $(`<button class="${current === 1 ? 'disabled' : ''}">Trang trước</button>`);
+        prevButton.on('click', function () {
+            if (current > 1) {
+                fetchMovies(current - 1);
+            }
+        });
+    
+        // Nút Trang sau
+        const nextButton = $(`<button class="${current === total ? 'disabled' : ''}">Trang sau</button>`);
+        nextButton.on('click', function () {
+            if (current < total) {
+                fetchMovies(current + 1);
+            }
+        });
+    
+        pagination.prepend(prevButton);
+        pagination.append(nextButton);
+    }
+    
+    function displayMovies(movies, pathImage = "") {
+        const movieList = $('#movie-list');
+        movieList.empty(); // Xóa dữ liệu cũ
+    
+        if (movies.length === 0) {
+            movieList.html("<p>Không tìm thấy phim nào phù hợp.</p>");
+            return;
+        }
+    
+        const table = $(`
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th style="width: 120px;">Thumbnail</th>
+                        <th>Tên phim</th>
+                        <th>Tên gốc</th>
+                        <th>Slug</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `);
+    
+        const tbody = table.find('tbody');
+    
+        movies.forEach(movie => {
+            const thumbUrl = movie.poster_url
+                ? (movie.poster_url.startsWith("http") ? movie.poster_url : `${pathImage}${movie.poster_url}`)
+                : "Không có hình ảnh";
+            const modifiedDate = movie.modified?.time
+                ? new Date(movie.modified.time).toLocaleString("vi-VN")
+                : "Không rõ";
+    
+            const row = $(`
+                <tr>
+                    <td class="text-center">
+                        <img src="${thumbUrl}" alt="${movie.name}" class="img-thumbnail" style="width: 100px; height: 150px; object-fit: cover;" />
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" class="movie-link" data-slug="${movie.slug}">
+                            ${movie.name}
+                        </a>
+                    </td>
+                    <td>${movie.origin_name || 'Không rõ'}</td>
+                    <td>${movie.slug || 'Không rõ'}</td>
+                    <td>${modifiedDate}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm add-movie-btn" data-slug="${movie.slug}">Thêm phim</button>
+                    </td>
+                </tr>
+            `);
+    
+            // Sự kiện xem chi tiết
+            row.find('.movie-link').on('click', function () {
+                const slug = $(this).data('slug');
+                fetchMovieDetails(slug); // Hiển thị chi tiết phim
+            });
+    
+            // Sự kiện thêm phim
+            row.find('.add-movie-btn').on('click', function () {
+                const slug = $(this).data('slug');
+                addMovieAndEpisodesBySlug(slug);
+            });
+    
+            tbody.append(row);
+        });
+    
+        movieList.append(table);
+    }
+    
+     function searchMovieBySlug(slug) {
+        const url = `https://phimapi.com/phim/${slug}`;
+        const movieList = $('#movie-list');
+        movieList.empty(); // Xóa danh sách cũ
+    
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (data) {
+                // Hiển thị phim tìm kiếm vào danh sách
+                displayMovies([data.movie], "https://phimimg.com/upload/vod/");
+            },
+            error: function (error) {
+                console.error('Error fetching movie by slug:', error);
+                movieList.html("<p>Không tìm thấy phim nào phù hợp.</p>");
+            }
+        });
+    }
+    
+    // Lắng nghe sự kiện nhập tìm kiếm
+    $('#search-query').on('input', function () {
+        const query = $(this).val().trim();
+        if (query) {
+            searchMovieBySlug(query); // Tìm kiếm theo slug
+        } else {
+            fetchMovies(1); // Nếu không có từ khóa, tải lại danh sách phim mặc định
+        }
+    });
+    
+    
+        $(document).ready(function() {
+            fetchMovies(currentPage);
+        });
+    </script>
+    <style>
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+    
+        .pagination-container button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+        }
+    
+        .pagination-container button.active {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+    
+        .pagination-container button.disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        .popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 700px;
+        width: 90%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+        max-height: 90%;
+    }
+    
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    #loading-indicator {
+        z-index: 9999;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    </style>
+</body>
+
+</html>

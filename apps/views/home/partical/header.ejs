@@ -1,0 +1,921 @@
+<!-- Header cập nhật -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Movies</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="FlameOnePage freebie theme for web startups by FairTech SEO." name="description" />
+    <meta content="FairTech" name="author" />
+    <link href="http://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet" type="text/css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="/static/home/vendor/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/animate.css" rel="stylesheet">
+    <link href="/static/home/vendor/swiper/css/swiper.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/layout.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/layout.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
+
+    <style>
+        .user-password {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+        }
+
+        .toggle-password:hover {
+            color: #fff;
+        }
+
+        #countryDropdown:focus,
+        #countryDropdown:active,
+        #countryDropdown.open,
+        #userDropdown:focus,
+        #userDropdown:active,
+        #userDropdown.open {
+            background-color: transparent !important;
+            /* Loại bỏ nền trắng */
+            color: red !important;
+            /* Giữ màu chữ đỏ */
+        }
+
+        .dropdown-menu {
+            background: #141414de !important;
+            /* Đổi màu nền menu dropdown */
+        }
+
+        .dropdown-menu a {
+            color: white !important;
+            /* Giữ màu chữ trắng */
+            text-shadow: 1px 1px 2px black, -1px -1px 2px black;
+            /* Tạo viền chữ màu đen */
+        }
+
+        .left-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 50%;
+            /* Điều chỉnh để ảnh rộng 50% màn hình */
+            background: url('/static/home/img/thumb.jpg') center/cover no-repeat;
+        }
+
+        .form-container {
+            width: 50%;
+            /* Phần chứa form chiếm 50% */
+            margin-left: auto;
+            /* Đẩy form về bên phải */
+            padding: 40px;
+        }
+
+        .form-control {
+            background-color: #1e253a;
+            border: none;
+            color: white;
+
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            background-color: #2c344b;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .btn-warning {
+            background-color: #fbc531;
+            border: none;
+            color: #121829;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .btn-warning:hover {
+            background-color: #e1a825;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+
+        }
+
+        #searchInput {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            width: 350px;
+            transition: width 0.3s ease-in-out;
+            background-color: #1e253a00;
+            height: 40px;
+        }
+
+        #searchInput:focus {
+            width: 400px;
+        }
+
+        #searchInput::placeholder {
+            color: white;
+            opacity: 1;
+            /* Đảm bảo màu trắng hiển thị rõ */
+        }
+
+        #searchButton {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        #searchButton i {
+            font-size: 18px;
+        }
+
+        .dropdown-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* Chia thành 3 cột */
+            gap: 10px;
+            /* Khoảng cách giữa các mục */
+            padding: 10px;
+            /* Thêm khoảng cách bên trong */
+            background-color: rgba(0, 0, 0, 0.8);
+            /* Nền dropdown */
+            border-radius: 8px;
+            /* Bo góc */
+        }
+
+        .dropdown-grid a {
+            color: white !important;
+            /* Màu chữ */
+            text-align: left;
+            /* Căn trái */
+            padding: 5px 10px;
+            /* Khoảng cách bên trong */
+            text-decoration: none;
+            /* Loại bỏ gạch chân */
+        }
+
+        .dropdown-grid a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            /* Hiệu ứng hover */
+            border-radius: 4px;
+            /* Bo góc khi hover */
+        }
+
+        .dropdown-menu {
+            display: none;
+            /* Ẩn mặc định */
+        }
+
+        .dropdown.open .dropdown-menu {
+            display: grid;
+            /* Hiển thị khi mở */
+        }
+
+        .search-modal {
+            background: #1b1b1bf6;
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            max-height: 570px;
+
+            scroll-behavior: auto;
+        }
+
+        /* Thiết lập thanh cuộn */
+        .search-modal::-webkit-scrollbar {
+            width: 8px;
+            /* Độ rộng của thanh cuộn */
+        }
+
+        /* Màu nền thanh cuộn */
+        .search-modal::-webkit-scrollbar-track {
+            background: #333;
+            /* Màu nền */
+            border-radius: 4px;
+        }
+
+        /* Màu của thanh kéo */
+        .search-modal::-webkit-scrollbar-thumb {
+            background: #666;
+            /* Màu thanh kéo */
+            border-radius: 4px;
+        }
+
+        /* Hover vào thanh kéo */
+        .search-modal::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+
+
+        /* Tiêu đề nhóm phim */
+        .group-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        /* Danh sách phim */
+        .group-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Mỗi item phim */
+        .h-item.s-item {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #ccc;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .h-item.s-item .info-line {
+            align-items: flex-end;
+        }
+
+        .h-item.s-item:hover {
+            background: #333;
+        }
+
+        .h-item.s-item:hover .alias-title {
+            color: #d286e4;
+        }
+
+        /* Ảnh poster phim */
+        .v-thumb-s {
+            width: 75px;
+            height: 100px;
+
+            margin-right: 10px;
+        }
+
+        .v-thumbnail img {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            object-fit: cover;
+            max-height: 100px !important;
+        }
+
+        .info {
+            height: 100px;
+        }
+
+
+
+        /* Tên phim */
+        .item-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            margin: 0;
+            white-space: nowrap;
+            /* Không cho xuống hàng */
+            overflow: hidden;
+            /* Ẩn phần dư */
+            text-overflow: ellipsis;
+            /* Thêm dấu "..." khi bị cắt */
+            max-width: 330px;
+            /* Đảm bảo không tràn container */
+        }
+
+        /* Tên tiếng Anh hoặc tên gốc */
+        .alias-title {
+            font-size: 10px;
+            color: #bbb;
+            margin-top: 10px;
+            white-space: nowrap;
+            /* Không cho xuống hàng */
+            overflow: hidden;
+            /* Ẩn phần dư */
+            text-overflow: ellipsis;
+            /* Thêm dấu "..." khi bị cắt */
+            max-width: 330px;
+            /* Đảm bảo không tràn container */
+        }
+
+        /* Hàng thông tin tập, phần */
+        .info-line {
+            display: flex;
+
+            gap: 3px;
+
+        }
+
+        .info-line h6 {
+            font-size: 9px;
+            color: #bbb;
+        }
+
+        /* Thẻ nhỏ cho tập, phần */
+        .tag-small {
+            background: #ff9800;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+<style>
+    /* CSS cho hiệu ứng loading */
+    #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #141414;
+        display: flex;
+        flex-direction: column; /* Thay đổi hướng flex thành cột */
+        align-items: center; /* Căn giữa theo chiều ngang */
+        justify-content: center; /* Căn giữa theo chiều dọc */
+        z-index: 9999;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    #loading-screen h1 {
+        position: absolute;
+        height: 40px;
+        margin: auto;
+        top: 220px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        text-transform: uppercase;
+        text-align: center;
+        letter-spacing: 0.1em;
+        font-size: 14px;
+        font-weight: lighter;
+        color: white;
+        span {
+            display: none;
+        }
+        &::after {
+            animation: txt 5s infinite;
+            content: "";
+        }
+    }
+
+    @keyframes rt {
+        100% {transform: rotate(360deg);}
+    }
+
+    @keyframes cw {
+        0% {
+            width: 0;
+            height: 0;
+        }
+        75% {
+            width: 40px;
+            height: 40px;
+        }
+        100% {
+            width: 0;
+            height: 0;
+        }
+    }
+
+    @keyframes txt {
+        0% {
+            content: "LOADING.";
+        }
+        50% {
+            content: "LOADING..";
+        }
+        100% {
+            content: "LOADING...";
+        }
+    }
+</style>
+</head>
+
+<header class="header navbar-fixed-top">
+    <nav class="navbar" role="navigation">
+        <div class="container-fluid">
+            <div class="menu-container js_nav-item">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="toggle-icon"></span>
+                </button>
+                <div class="logo">
+                    <a class="logo-wrap" href="/phimmoi">
+                        <img class="logo-img logo-img-main" src="/static/home/img/logo.png" alt="FlameOnePage Logo">
+                        <img class="logo-img logo-img-active" src="/static/home/img/logo-white.png"
+                            alt="FlameOnePage Dark Logo">
+                    </a>
+                </div>
+            </div>
+
+            <div class="collapse navbar-collapse nav-collapse">
+                <div class="menu-container">
+                    <ul class="nav navbar-nav navbar-nav-right">
+                        <!-- Ô nhập tìm kiếm -->
+                        <li class="js_nav-item nav-item">
+                            <div class="search-box nav-item-child nav-item-hover">
+                                <input style="color: d286e4;" type="text" id="searchInput"
+                                    placeholder="Tìm kiếm phim..." />
+                                <button id="searchButton"><i class="bi bi-search"></i></button>
+                                <div id="searchResults" class="search-results"></div> <!-- Kết quả tìm kiếm -->
+                            </div>
+                        </li>
+
+                        <li class="js_nav-item nav-item dropdown">
+                            <a class="nav-item-child nav-item-hover dropdown-toggle" href="#" id="countryDropdown"
+                                data-toggle="dropdown" aria-expanded="false">Quốc Gia <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-grid" aria-labelledby="countryDropdown"></ul>
+                        </li>
+
+                        <li class="js_nav-item nav-item nav-filter"><a class="nav-item-child nav-item-hover"
+                                href="">Phim Lẻ</a></li>
+                        <li class="js_nav-item nav-item nav-filter"><a class="nav-item-child nav-item-hover"
+                                href="">Phim Bộ</a></li>
+
+                        <li class="js_nav-item nav-item"><a class="nav-item-child nav-item-hover" href="/filter">Lọc
+                                phim</a>
+                        </li>
+                        <li class="js_nav-item nav-item" id="authSection">
+                            <!-- JS sẽ thay thế nội dung tại đây -->
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+</header>
+<div id="loading-screen">
+    <img class="logo-img logo-img-main" src="/static/home/img/logo.png" alt="FlameOnePage Logo">
+
+    <div class="spinner"></div>
+
+    <h1><span>LOADING</span></h1>
+</div>
+<!-- Modal Đăng nhập / Đăng ký -->
+<div id="authModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content position-relative"
+            style="background-color: #121829; border-radius: 12px; color: white; overflow: hidden;">
+
+            <!-- Nút đóng modal -->
+            <button class="btn modal-close position-absolute"
+                style="top: 10px; right: 10px; color: white; background: transparent; border: none;">
+                <i class="fa-solid fa-times"></i>
+            </button>
+
+            <!-- Ảnh nền bên trái -->
+            <div class="left-image"></div>
+
+            <!-- Phần form -->
+            <div class="form-container">
+                <!-- Form đăng nhập -->
+                <div id="loginForm">
+                    <div class="is-header mb-3 text-center">
+                        <h4 class="heading-sm mb-0">Đăng nhập</h4>
+                    </div>
+                    <div class="is-body">
+
+                        <p class="mt-2">
+                            Nếu chưa có tài khoản, mời Huynh Đài <a style="color: #fbc531;" href="#"
+                                id="switchToRegister">Đăng ký ngay</a>
+                        </p>
+                        <form class="v-form">
+                            <div class="form-group mb-2">
+                                <input class="form-control v-form-control" placeholder="Email" type="text" name="email">
+                            </div>
+                            <div class="form-group mb-4 user-password">
+                                <input class="form-control v-form-control" placeholder="Mật khẩu" type="password"
+                                    name="password">
+                                <div class="toggle-password">
+                                    <i class="bi bi-eye"></i>
+                                </div>
+                            </div>
+                            <div class="form-group action-btn mt-4 mb-4 d-grid">
+                                <button type="submit" class="btn btn-warning btn-block mt-3">Đăng nhập</button>
+                            </div>
+                            <div class="form-opt text-center">
+                                <a class="small">Quên mật khẩu?</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Form đăng ký (ẩn mặc định) -->
+                <div id="registerForm" style="display: none;">
+                    <div class="is-header mb-3 text-center">
+                        <h4 class="heading-sm mb-0">Đăng ký</h4>
+                    </div>
+                    <div class="is-body">
+                        <p class="mt-2" style="display: none;" id="backToLogin">
+                            Nếu đã có tài khoản, Huynh Đài hãy <a style="color: #fbc531;" href="#">Đăng nhập tại đây</a>
+                        </p>
+                        <form class="v-form">
+                            <div class="form-group mb-2">
+                                <input class="form-control v-form-control" placeholder="Tên hiển thị" type="text"
+                                    name="displayName">
+                            </div>
+                            <div class="form-group mb-2">
+                                <input class="form-control v-form-control" placeholder="Email" type="text" name="email">
+                            </div>
+                            <div class="form-group mb-2 user-password">
+                                <input class="form-control v-form-control" placeholder="Mật khẩu" type="password"
+                                    name="password">
+                                <div class="toggle-password">
+                                    <i class="bi bi-eye"></i>
+                                </div>
+                            </div>
+                            <div class="form-group mb-4 user-password">
+                                <input class="form-control v-form-control" placeholder="Xác nhận mật khẩu"
+                                    type="password" name="confirmPassword">
+                                <div class="toggle-password">
+                                    <i class="bi bi-eye"></i>
+                                </div>
+                            </div>
+                            <div class="form-group action-btn mt-4 mb-4 d-grid">
+                                <button type="submit" class="btn btn-warning btn-block mt-3">Đăng ký</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    // Ẩn hiệu ứng loading sau khi trang tải xong
+    window.addEventListener("load", function() {
+        setTimeout(() => {
+            document.getElementById("loading-screen").classList.add("hidden");
+        }, 500);
+    });
+    </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        checkAuthStatus();
+
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
+        const switchToRegister = document.getElementById("switchToRegister");
+        const backToLogin = document.getElementById("backToLogin");
+        const countryDropdown = document.getElementById('countryDropdown');
+        const dropdownMenu = document.querySelector('#countryDropdown + .dropdown-menu');
+        const searchInput = document.getElementById("searchInput");
+        const searchResults = document.getElementById("searchResults");
+        let searchTimeout;
+        document.querySelectorAll('.nav-filter a').forEach(item => {
+            item.addEventListener('click', function (event) {
+                event.preventDefault(); // Ngăn chặn load lại trang mặc định
+
+                let params = new URLSearchParams(window.location.search);
+
+                if (this.textContent.trim() === 'Phim Lẻ') {
+                    params.set('types', 'single');
+                } else if (this.textContent.trim() === 'Phim Bộ') {
+                    params.set('types', 'series');
+                } else if (this.closest('.js_nav-item').classList.contains('dropdown')) {
+                    params.set('country', this.dataset.id);
+                }
+
+                // Điều hướng sang trang lọc với các tham số cập nhật
+                window.location.href = `/filter?${params.toString()}`;
+            });
+        });
+
+
+        countryDropdown.addEventListener('click', function (event) {
+            event.preventDefault();
+            dropdownMenu.style.display = dropdownMenu.style.display === 'grid' ? 'none' : 'grid';
+        });
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', function (event) {
+            if (!countryDropdown.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+
+        document.getElementById('searchButton').addEventListener('click', function () {
+            const searchInput = document.getElementById('searchInput').value.trim();
+            if (searchInput) {
+                let params = new URLSearchParams(window.location.search);
+                params.set('keyword', searchInput);
+                window.location.href = `/filter?${params.toString()}`;
+            }
+        });
+
+        fetch('/api/movies/filters')
+            .then(response => response.json())
+            .then(data => {
+                if (data.countries) {
+                    const countryDropdownMenu = document.querySelector('#countryDropdown + .dropdown-menu');
+                    data.countries.forEach(country => {
+                        const countryItem = document.createElement('li');
+                        countryItem.innerHTML = `<a class="dropdown-item" href="/filter?country=${country.slug}" data-id="${country.slug}">${country.name}</a>`;
+                        countryDropdownMenu.appendChild(countryItem);
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching countries:', error));
+
+        // Cho phép tìm kiếm bằng cách nhấn "Enter"
+        document.getElementById('searchInput').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                document.getElementById('searchButton').click();
+            }
+        });
+
+
+        // Xử lý sự kiện nhập vào ô tìm kiếm (Live Search)
+        searchInput.addEventListener("input", function () {
+            const keyword = searchInput.value.trim();
+
+            if (keyword.length < 2) {
+                searchResults.style.display = "none";
+                return;
+            }
+
+            fetch(`/api/movies/search?keyword=${encodeURIComponent(keyword)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Dữ liệu API trả về:", data);
+
+                    searchResults.innerHTML = ""; // Xóa kết quả cũ trước khi thêm mới
+
+                    if (!data.movies || !Array.isArray(data.movies)) {
+                        console.error("Dữ liệu không hợp lệ:", data);
+                        searchResults.innerHTML = `<div class="no-result">Lỗi dữ liệu API</div>`;
+                        return;
+                    }
+
+                    if (data.movies.length === 0) {
+                        searchResults.innerHTML = `<div class="no-result">Không tìm thấy phim</div>`;
+                    } else {
+                        const searchModal = document.createElement("div");
+                        searchModal.classList.add("search-modal");
+
+                        const group = document.createElement("div");
+                        group.classList.add("show-group", "effect-fade-in");
+
+                        const title = document.createElement("div");
+                        title.classList.add("group-title");
+                        title.textContent = "Danh sách phim";
+
+                        const list = document.createElement("div");
+                        list.classList.add("group-list");
+
+                        data.movies.forEach(movie => {
+                            const item = document.createElement("a");
+                            item.classList.add("h-item", "s-item");
+                            item.href = `/phim/${movie.slug}`;
+                            item.innerHTML = `
+                        <div class="v-thumb-s">
+                            <div class="v-thumbnail">
+                                <img src="${movie.thumb_url}" alt="${movie.name}">
+                            </div>
+                        </div>
+                        <div class="info">
+                            <h4 class="item-title lim-2">${movie.name}</h4>
+                            <h6 class="alias-title mb-2 lim-1">${movie.origin_name || ""}</h6>
+                            <div class="info-line">
+                                ${movie.quality ? `<h6>${movie.quality}</h6>` : ""}
+                                ${movie.year ? `<h6> • ${movie.year}</h6>` : ""}
+                                ${movie.episode_current ? `<h6> • ${movie.episode_current}</h6>` : ""}
+                            </div>
+                        </div>
+                    `;
+                            list.appendChild(item);
+                        });
+
+                        group.appendChild(title);
+                        group.appendChild(list);
+                        searchModal.appendChild(group);
+                        searchResults.appendChild(searchModal);
+                    }
+
+                    searchResults.style.display = "block";
+                })
+                .catch(error => console.error("Lỗi tìm kiếm:", error));
+        });
+
+        // Xử lý sự kiện click ra ngoài để ẩn kết quả tìm kiếm
+        document.addEventListener("click", function (e) {
+            if (!searchResults.contains(e.target) && e.target !== searchInput) {
+                searchResults.style.display = "none";
+            }
+        });
+
+
+
+        // Khi click vào input, chỉ hiển thị nếu có kết quả
+        searchInput.addEventListener("focus", function () {
+            if (searchResults.innerHTML.trim() !== "") {
+                searchResults.style.display = "block";
+            }
+        });
+
+
+        // Chuyển sang form đăng ký
+        switchToRegister.addEventListener("click", function (event) {
+            event.preventDefault();
+            loginForm.style.display = "none";
+            registerForm.style.display = "block";
+            backToLogin.style.display = "block";
+        });
+
+        // Chuyển về form đăng nhập
+        backToLogin.addEventListener("click", function (event) {
+            event.preventDefault();
+            registerForm.style.display = "none";
+            loginForm.style.display = "block";
+            backToLogin.style.display = "none";
+        });
+
+        // Xử lý đăng nhập
+        function showMessage(form, message, isSuccess = false) {
+            let messageBox = form.querySelector(".form-message");
+            if (!messageBox) {
+                messageBox = document.createElement("div");
+                messageBox.className = "form-message mt-3 text-center";
+                form.appendChild(messageBox);
+            }
+            messageBox.innerHTML = message;
+            messageBox.style.color = isSuccess ? "green" : "red";
+        }
+
+        // Xử lý đăng nhập
+        document.querySelector("#loginForm form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const email = this.querySelector("[name='email']").value;
+            const password = this.querySelector("[name='password']").value;
+
+            try {
+                const response = await fetch("/api/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("display_name", data.display_name);
+                    localStorage.setItem("role_id", data.role_id);
+
+                    // Cập nhật giao diện mà không cần reload
+                    checkAuthStatus();
+
+                    // Đóng modal sau khi đăng nhập thành công
+                    // 🛠️ Ẩn modal đăng nhập đúng cách
+                    $('#authModal').modal('hide'); // Đóng modal Bootstrap
+
+                    showMessage(this, "Đăng nhập thành công!", true);
+                } else {
+                    showMessage(this, data.message);
+                }
+            } catch (error) {
+                showMessage(this, "Lỗi kết nối đến server. Vui lòng thử lại.");
+                console.error("Lỗi đăng nhập:", error);
+            }
+        });
+
+        // Xử lý đăng ký
+        document.querySelector("#registerForm form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const display_name = this.querySelector("[name='displayName']").value;
+            const email = this.querySelector("[name='email']").value;
+            const password = this.querySelector("[name='password']").value;
+            const confirmPassword = this.querySelector("[name='confirmPassword']").value;
+
+            if (password !== confirmPassword) {
+                showMessage(this, "Mật khẩu xác nhận không khớp!");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, display_name, password, confirmPassword })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    showMessage(this, "Đăng ký thành công! Vui lòng đăng nhập.", true);
+                    setTimeout(() => document.getElementById("backToLogin").click(), 1500);
+                } else {
+                    showMessage(this, data.message);
+                }
+            } catch (error) {
+                showMessage(this, "Lỗi kết nối đến server. Vui lòng thử lại.");
+                console.error("Lỗi đăng ký:", error);
+            }
+        });
+
+        // Hiển thị / Ẩn mật khẩu
+        document.querySelectorAll(".toggle-password").forEach(toggle => {
+            toggle.addEventListener("click", function () {
+                let input = this.previousElementSibling;
+                if (input.type === "password") {
+                    input.type = "text";
+                    this.innerHTML = '<i class="bi bi-eye-slash"></i>';
+                } else {
+                    input.type = "password";
+                    this.innerHTML = '<i class="bi bi-eye"></i>';
+                }
+            });
+        });
+
+        function checkAuthStatus() {
+            const display_name = localStorage.getItem("display_name");
+            const token = localStorage.getItem("token");
+            const authSection = document.getElementById("authSection");
+
+            if (!authSection) return; // Đảm bảo phần tử tồn tại trước khi cập nhật
+
+            if (display_name && token) {
+                // Nếu đã đăng nhập, hiển thị dropdown
+                authSection.innerHTML = `
+                    <a class="nav-item-child nav-item-hover dropdown-toggle" href="#" id="userDropdown" data-toggle="dropdown">
+                        ${display_name} <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" data-bs-popper>
+                        <li><a href="/profile">Profile</a></li>
+                        <li><a href="#" id="logoutBtn">Đăng xuất</a></li>
+                    </ul>
+                `;
+
+                // Gán sự kiện đăng xuất ngay lập tức
+                document.getElementById("logoutBtn").addEventListener("click", logout);
+            } else {
+                // Nếu chưa đăng nhập, hiển thị nút đăng nhập
+                authSection.innerHTML = `
+                    <li class="js_nav-item nav-item">
+                        <a class="nav-item-child nav-item-hover" href="#" data-toggle="modal" data-target="#authModal">Thành viên</a>
+                    </li>
+                `;
+            }
+        }
+
+        // Xử lý đăng xuất
+        async function logout() {
+            try {
+                await fetch("/logout", { method: "POST" });
+                localStorage.removeItem("token");
+                localStorage.removeItem("display_name");
+                localStorage.removeItem("role_id");
+
+                checkAuthStatus(); // Cập nhật giao diện
+            } catch (error) {
+                console.error("Lỗi đăng xuất:", error);
+            }
+        }
+    });
+</script>

@@ -1,0 +1,620 @@
+<!-- filepath: c:\DoAnNhomCuaSo11\apps\views\home\filter.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Movies</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="FlameOnePage freebie theme for web startups by FairTech SEO." name="description" />
+    <meta content="FairTech" name="author" />
+    <link href="http://fonts.googleapis.com/css?family=Hind:300,400,500,600,700" rel="stylesheet" type="text/css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="/static/home/vendor/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/animate.css" rel="stylesheet">
+    <link href="/static/home/vendor/swiper/css/swiper.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/layout.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/home/css/layout.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="shortcut icon" href="favicon.ico" />
+
+    <style>
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            padding-top: 20px;
+        }
+
+        .movie {
+            text-align: center;
+        }
+
+        .movie img {
+            border-radius: 12px;
+            /* Bo tròn hình ảnh bên trong slider */
+            overflow: hidden;
+            /* Đảm bảo hình ảnh không bị tràn ra ngoài */
+            height: 270px;
+            object-fit: cover;
+            /* Tự động cắt ảnh nếu ảnh thừa */
+            width: 100%;
+            /* Đảm bảo ảnh chiếm toàn bộ chiều rộng của thẻ chứa */
+        }
+
+        .filter-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            background-color: #33333300;
+            padding: 10px;
+            border-radius: 5px;
+            width: fit-content;
+        }
+
+        .filter-header i {
+            color: #fc4f4f;
+            /* Màu khi tắt */
+        }
+
+        .filter-header.closed i {
+            color: #3c3c3c;
+            /* Màu khi tắt */
+        }
+
+        .filter-container {
+            background-color: #22222200;
+
+            border-radius: 30px;
+
+
+            flex-direction: column;
+            border: 1px solid #3c3c3c;
+
+        }
+
+
+        .filter-content label {
+            font-weight: bold;
+            color: #fffbfb;
+            text-align: center;
+        }
+
+        .filter-content .row {
+            padding: 10px;
+        }
+
+        .filter-section {
+            border-bottom: 1px solid #3c3c3c;
+        }
+
+        .filter-section .options {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .filter-section .options button {
+            margin: 5px;
+            padding: 5px;
+            border: none;
+            background-color: #007bff00;
+            color: white;
+            cursor: pointer;
+        }
+
+        .filter-section .options button.selected {
+            color: #fc4f4f;
+        }
+
+        .filter-section .row>div:first-child {
+            display: flex;
+            align-items: center;
+            justify-content: right;
+        }
+
+        .filter-footer .row>div:first-child {
+            display: flex;
+            align-items: center;
+            justify-content: right;
+        }
+
+        .filter-section label {
+            margin-bottom: 0;
+        }
+
+        .filter-footer {
+            padding: 10px;
+
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border: #ccc solid 1px;
+            border-radius: 30px;
+            padding: 10px 15px;
+            margin: 5px;
+        }
+
+        .filter-btn,
+        .reset-btn {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 30px;
+            background-color: #fc4f4f;
+            border: #000000 solid 1px;
+            color: rgb(0, 0, 0);
+
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            margin: 0 5px;
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.page-numbers button {
+    padding: 5px 10px;
+    margin: 0 2px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+}
+
+.page-numbers button.active {
+    background: blue;
+    color: white;
+    font-weight: bold;
+}
+
+.page-numbers span {
+    padding: 5px;
+    font-weight: bold;
+}
+
+    </style>
+</head>
+
+<body id="body" data-spy="scroll" data-target=".header">
+    <%- include('partical/header'); %>
+       
+        <div class="container-fluid" style="padding-top: 100px;">
+            <h1><i class="bi bi-filter-square"></i>
+                Lọc Phim</h1>
+            <div class="filter-header" id="toggleFilterButton">
+                <i class="bi bi-funnel-fill"></i>
+                <span>Bộ lọc</span>
+            </div>
+
+            <div class=" filter-container" id="filterContainer">
+
+                <div class="filter-content">
+                    <div class="filter-section">
+                        <div class="row">
+                            <div class="col-lg-2 ">
+                                <label>Quốc gia:</label>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="options" id="country-options"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>Loại phim:</label>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="options" id="type-options"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+
+
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>Thể loại:</label>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="options" id="genre-options"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+
+
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>Năm sản xuất:</label>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="options" id="year-options"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-section">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>Sắp xếp:</label>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="options" id="sort-options">
+                                    <button data-value="modified_time" class="sort-btn">Mới cập nhật</button>
+                                    <button data-value="year" class="sort-btn">Mới nhất</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="filter-footer">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <label>Hành Động:</label>
+                        </div>
+                        <div class="col-lg-12">
+                            <button id="filterButton" class="filter-btn"><i class="bi bi-search"></i> Lọc kết
+                                quả</button>
+                            <button id="resetFilterButton" class="reset-btn"><i class="bi bi-arrow-clockwise"></i> Làm
+                                mới </button>
+                            <button id="closeFilterBottom" class="close-btn"><i class="bi bi-x-circle"></i>
+                                Đóng</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="container-fluid" style="padding-top: 100px;">
+
+            <div id="movies" class="filter-movies">
+                <!-- Latest Products -->
+
+
+            </div>
+            <div class="pagination row">
+                <button id="prevPage" disabled>Prev</button>
+                <div class="page-numbers"></div>
+                <button id="nextPage" disabled>Next</button>
+            </div>
+
+        </div>
+
+
+
+
+
+        <a href="javascript:void(0);" class="js-back-to-top back-to-top">Top</a>
+
+        <script src="/static/home/vendor/jquery.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery-migrate.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery.easing.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery.back-to-top.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery.smooth-scroll.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/jquery.wow.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/swiper/js/swiper.jquery.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/masonry/jquery.masonry.pkgd.min.js" type="text/javascript"></script>
+        <script src="/static/home/vendor/masonry/imagesloaded.pkgd.min.js" type="text/javascript"></script>
+        <script src="/static/home/js/layout.min.js" type="text/javascript"></script>
+        <script src="/static/home/js/components/wow.min.js" type="text/javascript"></script>
+        <script src="/static/home/js/components/swiper.min.js" type="text/javascript"></script>
+        <script src="/static/home/js/components/masonry.min.js" type="text/javascript"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+        <script>
+
+            let selectedSort = ''; // Biến tạm để lưu lựa chọn sắp xếp
+
+            document.querySelectorAll('#sort-options .sort-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    // Bỏ chọn tất cả button
+                    document.querySelectorAll('#sort-options .sort-btn').forEach(btn => btn.classList.remove('selected'));
+
+                    // Chọn button hiện tại và lưu giá trị
+                    this.classList.add('selected');
+                    selectedSort = this.dataset.value; // Lưu vào biến tạm, không lọc ngay
+                });
+            });
+            document.getElementById('toggleFilterButton').addEventListener('click', function () {
+                let filterContainer = document.getElementById('filterContainer');
+                let toggleButton = document.getElementById('toggleFilterButton');
+
+                let currentDisplay = window.getComputedStyle(filterContainer).display;
+
+                if (currentDisplay === 'none') {
+                    filterContainer.style.display = 'flex'; // Hiển thị bộ lọc
+                    toggleButton.classList.remove('closed'); // Bỏ màu "tắt"
+                } else {
+                    filterContainer.style.display = 'none'; // Ẩn bộ lọc
+                    toggleButton.classList.add('closed'); // Thêm màu "tắt"
+                }
+            });
+
+
+
+            document.getElementById('closeFilterBottom').addEventListener('click', function () {
+                document.querySelector('.filter-container').style.display = 'none';
+
+            });
+
+
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch('/api/movies/filters')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.genres) {
+                            const genreOptions = document.getElementById('genre-options');
+                            data.genres.forEach(genre => {
+                                const button = document.createElement('button');
+                                button.textContent = genre.name;
+                                button.dataset.slug = genre.slug; // Dùng slug thay vì id
+                                button.addEventListener('click', function () {
+                                    button.classList.toggle('selected');
+                                });
+                                genreOptions.appendChild(button);
+                            });
+                        }
+
+                        if (data.countries) {
+                            const countryOptions = document.getElementById('country-options');
+                            data.countries.forEach(country => {
+                                const button = document.createElement('button');
+                                button.textContent = country.name;
+                                button.dataset.slug = country.slug; // Dùng slug thay vì id
+                                button.addEventListener('click', function () {
+                                    button.classList.toggle('selected');
+                                });
+                                countryOptions.appendChild(button);
+                            });
+                        }
+
+                        if (data.years) {
+                            const yearOptions = document.getElementById('year-options');
+                            data.years.forEach(year => {
+                                const button = document.createElement('button');
+                                button.textContent = year.year;
+                                button.dataset.id = year.year;
+                                button.addEventListener('click', function () {
+                                    button.classList.toggle('selected');
+                                });
+                                yearOptions.appendChild(button);
+                            });
+                        }
+
+                        if (data.types) {
+                            const typeOptions = document.getElementById('type-options');
+                            data.types.forEach(type => {
+                                const button = document.createElement('button');
+                                button.textContent = typeMap[type.type] || type.type;
+                                button.dataset.id = type.type;
+                                button.addEventListener('click', function () {
+                                    button.classList.toggle('selected');
+                                });
+                                typeOptions.appendChild(button);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+
+
+            function getURLParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return {
+                    keyword: urlParams.get('keyword') || '',  // Giữ lại keyword từ URL
+                    genre: urlParams.get('genre') || '',
+                    country: urlParams.get('country') || '',
+                    actor: urlParams.get('actor') || '',
+                    director: urlParams.get('director') || '',
+                    year: urlParams.get('years') || '',
+                    type: urlParams.get('types') || '',
+                    sortBy: urlParams.get('sortBy') || 'modified_time',
+                    page: urlParams.get('page') || 1,
+                    limit: urlParams.get('limit') || 24
+                };
+            }
+
+
+            function updateURL(params) {
+                const newParams = new URLSearchParams(params);
+                history.pushState(null, '', `/filter?${newParams.toString()}`);
+            }
+            const typeMap = {
+                'tvshows': 'TV shows',
+                'hoathinh': 'Hoạt hình',
+                'series': 'Phim bộ',
+                'single': 'Phim lẻ'
+            };
+
+            const statusMap = {
+                'ongoing': 'Đang chiếu',
+                'trailer': 'Sắp chiếu',
+                'completed': 'Hoàn tất'
+            };
+
+          let currentPage = 1;
+            const limit = 24;
+            function loadMovies() {
+    const params = getURLParams();
+    fetch(`/api/movies/filter?${new URLSearchParams(params).toString()}`)
+        .then(response => response.json())
+        .then(data => {
+            const moviesDiv = document.getElementById('movies');
+            moviesDiv.innerHTML = '';
+
+            if (data.movies.length) {
+                const moviesGrid = document.createElement('div');
+                moviesGrid.className = 'movies-grid';
+                data.movies.forEach(movie => {
+                    const movieDiv = document.createElement('div');
+                    movieDiv.className = 'movie';
+                    movieDiv.innerHTML = `
+                        <a href="/phim/${movie.slug}">
+                            <div class="movie-card">
+                                <img class="img-responsive" style="height: 270px;" src="${movie.thumb_url}" alt="${movie.name}">
+                                <div class="movie-detail-placeholder"></div>
+                            </div>
+                            <div class="text-center">
+                                <h5><a href="/phim/${movie.slug}">${movie.name}</a></h5>
+                            </div>
+                        </a>
+                    `;
+                    moviesGrid.appendChild(movieDiv);
+                });
+                moviesDiv.appendChild(moviesGrid);
+            }
+
+            updatePagination(data.totalPage, params.page);
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+            function updatePagination(totalPage, currentPage) {
+                const pageNumbersDiv = document.querySelector('.page-numbers');
+                pageNumbersDiv.innerHTML = '';
+
+                function createPageButton(page) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.textContent = page;
+                    pageBtn.className = page === currentPage ? 'active' : '';
+                    pageBtn.addEventListener('click', () => {
+                        const params = getURLParams();
+                        params.page = page;
+                        updateURL(params);
+                        loadMovies();
+                    });
+                    return pageBtn;
+                }
+
+                if (totalPage <= 5) {
+                    for (let i = 1; i <= totalPage; i++) {
+                        pageNumbersDiv.appendChild(createPageButton(i));
+                    }
+                } else {
+                    if (currentPage > 3) {
+                        pageNumbersDiv.appendChild(createPageButton(1));
+                        if (currentPage > 4) pageNumbersDiv.appendChild(document.createTextNode(" ... "));
+                    }
+
+                    let start = Math.max(2, currentPage - 1);
+                    let end = Math.min(totalPage - 1, currentPage + 1);
+                    for (let i = start; i <= end; i++) {
+                        pageNumbersDiv.appendChild(createPageButton(i));
+                    }
+
+                    if (currentPage < totalPage - 2) {
+                        if (currentPage < totalPage - 3) pageNumbersDiv.appendChild(document.createTextNode(" ... "));
+                        pageNumbersDiv.appendChild(createPageButton(totalPage));
+                    }
+                }
+
+                document.getElementById('prevPage').disabled = currentPage <= 1;
+                document.getElementById('nextPage').disabled = currentPage >= totalPage;
+            }
+
+            document.getElementById('prevPage').addEventListener('click', function () {
+                const params = getURLParams();
+                if (params.page > 1) {
+                    params.page--;
+                    updateURL(params);
+                    loadMovies();
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', function () {
+                const params = getURLParams();
+                params.page++;
+                updateURL(params);
+                loadMovies();
+            });
+            document.getElementById('filterButton').addEventListener('click', function () {
+                let params = new URLSearchParams(window.location.search);
+
+                const selectedParams = {
+                    genre: Array.from(document.querySelectorAll('#genre-options button.selected')).map(btn => btn.dataset.slug).join(','),
+                    country: Array.from(document.querySelectorAll('#country-options button.selected')).map(btn => btn.dataset.slug).join(','),
+                    years: Array.from(document.querySelectorAll('#year-options button.selected')).map(button => button.dataset.id).join(','),
+                    types: Array.from(document.querySelectorAll('#type-options button.selected')).map(button => button.dataset.id).join(',')
+                };
+
+                // Chỉ cập nhật sortBy nếu đã chọn
+                if (selectedSort) {
+                    params.set('sortBy', selectedSort);
+                }
+
+                // Cập nhật các tham số mới vào URL
+                Object.keys(selectedParams).forEach(key => {
+                    if (selectedParams[key]) {
+                        params.set(key, selectedParams[key]);
+                    } else {
+                        params.delete(key);
+                    }
+                });
+
+                // Cập nhật URL và tải phim
+                history.pushState(null, '', `/filter?${params.toString()}`);
+                loadMovies();
+            });
+
+            document.getElementById('resetFilterButton').addEventListener('click', function () {
+                // Xóa tất cả tham số URL
+                history.pushState(null, '', '/filter');
+
+                // Bỏ chọn tất cả các button lọc
+                document.querySelectorAll('.options button.selected').forEach(btn => btn.classList.remove('selected'));
+
+                // Đặt lại select về giá trị mặc định
+                document.getElementById('sortBy').value = 'modified_time';
+
+                // Gọi lại loadMovies để hiển thị danh sách phim gốc
+                loadMovies();
+            });
+
+
+
+
+
+
+            // Gọi loadMovies ngay khi vào trang filter
+            loadMovies();
+
+        </script>
+</body>
+
+</html>

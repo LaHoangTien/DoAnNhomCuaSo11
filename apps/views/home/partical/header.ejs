@@ -345,91 +345,107 @@
             font-size: 12px;
         }
     </style>
-<style>
-    /* CSS cho hiệu ứng loading */
-    #loading-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #141414;
-        display: flex;
-        flex-direction: column; /* Thay đổi hướng flex thành cột */
-        align-items: center; /* Căn giữa theo chiều ngang */
-        justify-content: center; /* Căn giữa theo chiều dọc */
-        z-index: 9999;
-    }
-
-    .spinner {
-        width: 50px;
-        height: 50px;
-        border: 5px solid rgba(255, 255, 255, 0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    #loading-screen h1 {
-        position: absolute;
-        height: 40px;
-        margin: auto;
-        top: 220px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        text-transform: uppercase;
-        text-align: center;
-        letter-spacing: 0.1em;
-        font-size: 14px;
-        font-weight: lighter;
-        color: white;
-        span {
-            display: none;
+    <style>
+        /* CSS cho hiệu ứng loading */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #141414;
+            display: flex;
+            flex-direction: column;
+            /* Thay đổi hướng flex thành cột */
+            align-items: center;
+            /* Căn giữa theo chiều ngang */
+            justify-content: center;
+            /* Căn giữa theo chiều dọc */
+            z-index: 9999;
         }
-        &::after {
-            animation: txt 5s infinite;
-            content: "";
-        }
-    }
 
-    @keyframes rt {
-        100% {transform: rotate(360deg);}
-    }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
 
-    @keyframes cw {
-        0% {
-            width: 0;
-            height: 0;
         }
-        75% {
-            width: 40px;
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loading-screen h1 {
+            position: absolute;
             height: 40px;
-        }
-        100% {
-            width: 0;
-            height: 0;
-        }
-    }
+            margin: auto;
+            top: 220px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            text-transform: uppercase;
+            text-align: center;
+            letter-spacing: 0.1em;
+            font-size: 14px;
+            font-weight: lighter;
+            color: white;
 
-    @keyframes txt {
-        0% {
-            content: "LOADING.";
+            span {
+                display: none;
+            }
+
+            &::after {
+                animation: txt 5s infinite;
+                content: "";
+            }
         }
-        50% {
-            content: "LOADING..";
+
+        @keyframes rt {
+            100% {
+                transform: rotate(360deg);
+            }
         }
-        100% {
-            content: "LOADING...";
+
+        @keyframes cw {
+            0% {
+                width: 0;
+                height: 0;
+            }
+
+            75% {
+                width: 40px;
+                height: 40px;
+            }
+
+            100% {
+                width: 0;
+                height: 0;
+            }
         }
-    }
-</style>
+
+        @keyframes txt {
+            0% {
+                content: "LOADING.";
+            }
+
+            50% {
+                content: "LOADING..";
+            }
+
+            100% {
+                content: "LOADING...";
+            }
+        }
+    </style>
 </head>
 
 <header class="header navbar-fixed-top">
@@ -541,6 +557,7 @@
                                 <a class="small">Quên mật khẩu?</a>
                             </div>
                         </form>
+                        
                     </div>
                 </div>
 
@@ -579,6 +596,7 @@
                                 <button type="submit" class="btn btn-warning btn-block mt-3">Đăng ký</button>
                             </div>
                         </form>
+                        
                     </div>
                 </div>
 
@@ -591,12 +609,12 @@
 
 <script>
     // Ẩn hiệu ứng loading sau khi trang tải xong
-    window.addEventListener("load", function() {
+    window.addEventListener("load", function () {
         setTimeout(() => {
             document.getElementById("loading-screen").classList.add("hidden");
         }, 500);
     });
-    </script>
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         checkAuthStatus();
@@ -809,14 +827,15 @@
                     localStorage.setItem("display_name", data.display_name);
                     localStorage.setItem("role_id", data.role_id);
 
-                    // Cập nhật giao diện mà không cần reload
                     checkAuthStatus();
 
-                    // Đóng modal sau khi đăng nhập thành công
-                    // 🛠️ Ẩn modal đăng nhập đúng cách
-                    $('#authModal').modal('hide'); // Đóng modal Bootstrap
-
                     showMessage(this, "Đăng nhập thành công!", true);
+
+                  
+                    setTimeout(function () {
+                        $('#authModal').modal('hide');
+                    }, 2000);
+
                 } else {
                     showMessage(this, data.message);
                 }
@@ -849,7 +868,7 @@
                 const data = await response.json();
                 if (response.ok) {
                     showMessage(this, "Đăng ký thành công! Vui lòng đăng nhập.", true);
-                    setTimeout(() => document.getElementById("backToLogin").click(), 1500);
+                    setTimeout(() => document.getElementById("backToLogin").click(), 2000);
                 } else {
                     showMessage(this, data.message);
                 }
@@ -898,7 +917,7 @@
                 // Nếu chưa đăng nhập, hiển thị nút đăng nhập
                 authSection.innerHTML = `
                     <li class="js_nav-item nav-item">
-                        <a class="nav-item-child nav-item-hover" href="#" data-toggle="modal" data-target="#authModal">Thành viên</a>
+                        <a class="nav-item-child nav-item-hover modal" href="#" data-toggle="modal" data-target="#authModal">Thành viên</a>
                     </li>
                 `;
             }

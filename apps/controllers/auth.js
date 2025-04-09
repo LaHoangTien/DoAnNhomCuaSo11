@@ -10,19 +10,32 @@ const SECRET_KEY = "goK!pusp6ThEdURUtRenOwUhAsWUCLheBazl!uJLPlS8EbreWLdrupIwabRA
 router.post("/api/login", async (req, res) => {
     try {
         const { email, password } = req.body;
+        if (!email  ) {
+            return res.status(400).json({ message: "Vui lòng nhập email." });
+        }
+        if (!password) {
+            return res.status(400).json({ message: "Vui lòng nhập mật khẩu." });
+        }
+        // Kiểm tra xem email hợp lệ
+        const validator = require('validator');
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({ message: "Email không hợp lệ." });
+        }
 
         // Kiểm tra xem email có tồn tại không
         const [users] = await db.promise().query("SELECT * FROM users WHERE email = ?", [email]);
         if (users.length === 0) {
-            return res.status(400).json({ message: "Email hoặc mật khẩu không chính xác" });
+            return res.status(400).json({ message: "Email không chính xác" });
         }
-
         const user = users[0];
-
+        // Kiểm tra độ dài mật khẩu (từ 8 đến 20 ký tự)
+         if (password.length < 8 || password.length > 20) {
+            return res.status(400).json({ message: "Mật khẩu phải từ 8 đến 20 ký tự." });
+        }
         // Kiểm tra mật khẩu
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: "Email hoặc mật khẩu không chính xác" });
+            return res.status(400).json({ message: "Mật khẩu không chính xác" });
         }
 
         // Tạo token
@@ -55,7 +68,17 @@ router.post("/api/register", async (req, res) => {
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Mật khẩu xác nhận không khớp." });
         }
+         // Kiểm tra độ dài mật khẩu (từ 8 đến 20 ký tự)
+         if (password.length < 8 || password.length > 20) {
+            return res.status(400).json({ message: "Mật khẩu phải từ 8 đến 20 ký tự." });
+        }
 
+        // Kiểm tra xem email hợp lệ
+        const validator = require('validator');
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({ message: "Email không hợp lệ." });
+        }
+        
         // Kiểm tra xem email đã tồn tại chưa
         const [existingUsers] = await db.promise().query("SELECT * FROM users WHERE email = ?", [email]);
         if (existingUsers.length > 0) {

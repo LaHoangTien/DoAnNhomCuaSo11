@@ -6,7 +6,9 @@ var db = require("../../db");
 router.get("/phimmoi", function(req, res) {
     res.render("home/home");
 });
-
+router.get("/error", function(req,res){
+    res.render("home/error.ejs");
+});
 // Hàm lấy thông tin phim kèm chi tiết
 async function getMoviesWithDetails(query, params, res, returnAsObject = false) {
     try {
@@ -45,26 +47,16 @@ router.get("/api/movies/search", async (req, res) => {
     let params = [];
 
     if (keyword || actor || director) {
-        query += " LEFT JOIN movie_actors ma ON movies.id = ma.movie_id";
-        query += " LEFT JOIN actors a ON ma.actor_id = a.id";
-        query += " LEFT JOIN movie_directors md ON movies.id = md.movie_id";
-        query += " LEFT JOIN directors d ON md.director_id = d.id";
+        
         query += " WHERE 1=1";
 
         if (keyword) {
-            query += " AND (movies.name LIKE ? OR a.name LIKE ? OR d.name LIKE ?)";
-            params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
+            query += " AND (movies.name LIKE ? OR movies.origin_name LIKE ?)";
+            params.push(`%${keyword}%`, `%${keyword}%`);
+          
         }
 
-        if (actor) {
-            query += " AND a.name LIKE ?";
-            params.push(`%${actor}%`);
-        }
-
-        if (director) {
-            query += " AND d.name LIKE ?";
-            params.push(`%${director}%`);
-        }
+        
     } else {
         query += " WHERE 1=1";
     }

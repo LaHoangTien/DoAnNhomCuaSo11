@@ -8,7 +8,7 @@ async function authenticateToken(req, res, next) {
     console.log("Authorization Header:", authHeader); // Debug xem token có gửi không
     
     const token = authHeader && authHeader.split(" ")[1];
-    if (!token) return res.render("home/error");
+    if (!token) return res.redirect("home/error");
 
     try {
         const decoded = jwt.verify(token, secretKey);

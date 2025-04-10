@@ -190,11 +190,11 @@
                 </div>`
             ).join('');
             var categories = movie.categories.map(category =>
-                `<a href="/filter?genre=${category.slug}" class="btn-theme btn-theme-sm btn-white-brd">${category.name}</a>`
+                `<a href="/filter?genre=${category.slug}" class="btn-theme btn-theme-sm btn-white-brd genre">${category.name}</a>`
             ).join(' ');
 
             var countries = movie.countries.map(country =>
-                `<a href="/filter?country=${country.slug}" class="btn-theme btn-theme-sm btn-white-brd">${country.name}</a>`
+                `<a href="/filter?country=${country.slug}" class="btn-theme btn-theme-sm btn-white-brd country">${country.name}</a>`
             ).join(' ');
 
             var actors = movie.actors.map(actor =>
@@ -227,10 +227,10 @@
                     
                     <div class="movie-categories">
                         <h6>Giới thiệu: <span class="movie-content">${movie.content}</span></h6>
-                        
-                        <h6>Thời lượng: <span class="movie-content">${movie.time}</span></h6>
+                        <h6>Thời lượng: <span class="movie-content year">${movie.time}</span></h6>
+                        <h6>Năm phát hành: <span class="movie-content">${movie.year}</span></h6>
                         <h6>Đạo diễn: <span class="movie-content">${directors}</span></h6>
-                        <h6>Danh mục: <a href="/filter?type=${movie.type}" class="btn-theme btn-theme-sm btn-white-brd text-uppercase">${typeText}</a>
+                        <h6 class="danhmuc">Danh mục: <a href="/filter?type=${movie.type}" class="btn-theme btn-theme-sm btn-white-brd text-uppercase type">${typeText}</a>
                         ${countries} 
                         ${categories}</h6>
                         

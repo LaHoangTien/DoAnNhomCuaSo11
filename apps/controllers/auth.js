@@ -44,6 +44,7 @@ router.post("/api/login", async (req, res) => {
             SECRET_KEY,
             { expiresIn: "1h" }
         );
+        
         res.cookie("token", token, { httpOnly: true, secure: false }); // secure: true nếu dùng HTTPS
         res.json({ token, display_name: user.display_name, role_id: user.role_id });
     } catch (error) {
@@ -51,8 +52,6 @@ router.post("/api/login", async (req, res) => {
         res.status(500).json({ message: "Lỗi máy chủ" });
     }
 });
-
-
 
 // Đăng ký
 router.post("/api/register", async (req, res) => {

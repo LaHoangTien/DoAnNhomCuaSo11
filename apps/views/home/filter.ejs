@@ -471,16 +471,22 @@
                                     <a href="/phim/${movie.slug}">
                                         <div class="movie-card">
                                             <img class="img-responsive" style="height: 270px;" src="${movie.thumb_url}" alt="${movie.name}">
-                                            <div class="movie-detail-placeholder"></div>
+                                            
                                         </div>
                                         <div class="text-center">
-                                            <h5><a href="/phim/${movie.slug}">${movie.name}</a></h5>
+                                            <h5>${movie.name}</h5>
                                         </div>
                                     </a>
                                 `;
                                 moviesGrid.appendChild(movieDiv);
                             });
                             moviesDiv.appendChild(moviesGrid);
+                        } else {
+
+                            const notFoundHeading = document.createElement('h3');
+                            notFoundHeading.textContent = 'Không tìm thấy phim phù hợp.';
+                            notFoundHeading.className = 'text-center';
+                            moviesDiv.appendChild(notFoundHeading);
                         }
 
                         updatePagination(data.totalPage, params.page);
@@ -507,6 +513,7 @@
                             updateURL(params);
                             loadMovies();
                             window.scrollTo({ top: 0, behavior: 'smooth' });
+                            document.querySelector('.filter-container').style.display = 'none';
                         }
                     });
                     return pageBtn;

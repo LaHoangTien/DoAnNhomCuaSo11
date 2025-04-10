@@ -557,7 +557,7 @@
                                 <a class="small">Quên mật khẩu?</a>
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
 
@@ -596,7 +596,7 @@
                                 <button type="submit" class="btn btn-warning btn-block mt-3">Đăng ký</button>
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
 
@@ -696,7 +696,8 @@
             const keyword = searchInput.value.trim();
 
             if (keyword.length < 2) {
-                searchResults.style.display = "none";
+                searchResults.innerHTML = ""; // ✅ Xóa kết quả cũ
+                searchResults.style.display = "none"; // ✅ Ẩn khung kết quả
                 return;
             }
 
@@ -831,7 +832,7 @@
 
                     showMessage(this, "Đăng nhập thành công!", true);
 
-                  
+
                     setTimeout(function () {
                         $('#authModal').modal('hide');
                     }, 2000);

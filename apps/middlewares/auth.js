@@ -6,12 +6,12 @@ function authenticate(req, res, next) {
     const token = req.cookies.token; // Lấy token từ Cookie
 
     if (!token) {
-        return res.render("home/error");
+        return res.redirect("/error");
     }
 
     jwt.verify(token, "goK!pusp6ThEdURUtRenOwUhAsWUCLheBazl!uJLPlS8EbreWLdrupIwabRAsiBu", (err, decoded) => {
         if (err) {
-            return res.render("home/error");
+            return res.redirect("/error");
         }
 
         req.user = decoded;
@@ -20,7 +20,7 @@ function authenticate(req, res, next) {
 }
 function authorizeAdmin(req, res, next) {
     if (req.user.role_id !== 1) {
-        return res.status(403).json({ message: "Forbidden: Admins only" });
+        return res.redirect("/error");
     }
     next();
 }

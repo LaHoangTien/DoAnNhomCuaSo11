@@ -10,8 +10,7 @@
 // });
 
 // async function addMovie(slug) {
-//     try {
-//         const response = await axios.get(`https://ophim1.com/phim/${slug}`);
+//     try {//         const response = await axios.get(`https://ophim1.com/phim/${slug}`);
 //         const movieData = response.data.movie;
 
 //         // Sử dụng cheerio để làm sạch nội dung

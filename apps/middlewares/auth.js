@@ -6,15 +6,20 @@ function authenticate(req, res, next) {
     const token = req.cookies.token; // Lấy token từ Cookie
 
     if (!token) {
-        return res.redirect("/error");
+        return res.status(401).json({ message: "No token provided." });
     }
 
     jwt.verify(token, "goK!pusp6ThEdURUtRenOwUhAsWUCLheBazl!uJLPlS8EbreWLdrupIwabRAsiBu", (err, decoded) => {
         if (err) {
-            return res.redirect("/error");
+            return res.status(403).json({ message: "Failed to authenticate token." });
         }
 
         req.user = decoded;
+
+        
+        res.locals.token = token; 
+        res.locals.user = decoded;
+
         next();
     });
 }

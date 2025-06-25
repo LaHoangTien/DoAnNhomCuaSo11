@@ -259,7 +259,7 @@
                 firstPageBtn.className = "btn btn-secondary";
                 firstPageBtn.onclick = () => fetchMovies(1);
                 paginationContainer.appendChild(firstPageBtn);
-
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 if (startPage > 2) {
                     const dots = document.createElement("span");
                     dots.textContent = "...";
@@ -274,6 +274,7 @@
                 btn.className = `btn ${i === current ? 'btn-primary' : 'btn-secondary'}`;
                 btn.onclick = () => fetchMovies(i);
                 paginationContainer.appendChild(btn);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             if (endPage < totalPages) {

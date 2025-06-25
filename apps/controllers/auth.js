@@ -45,7 +45,7 @@ router.post("/api/login", async (req, res) => {
             { expiresIn: "1h" }
         );
         
-        res.cookie("token", token, { httpOnly: true, secure: false }); // secure: true nếu dùng HTTPS
+        res.cookie("token", token, { httpOnly: true, secure: false });
         res.json({ token, display_name: user.display_name, role_id: user.role_id });
     } catch (error) {
         console.error("Lỗi đăng nhập:", error);

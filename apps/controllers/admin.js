@@ -14,7 +14,7 @@ router.get("/api/me", authenticate, (req, res) => {
     res.json({ id: req.user.id, role_id: req.user.role_id });
 });
 
-router.get("/api/admin/movies", authenticateToken, authorizeRole(1), function(req, res) {
+router.get("/api/admin/movies", authenticate, authorizeAdmin, function(req, res) {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
@@ -75,7 +75,7 @@ router.get("/api/admin/movies", authenticateToken, authorizeRole(1), function(re
     });
 });
 
-router.delete("/api/delete/movies/:id", authenticateToken, authorizeRole(1), function(req, res) {
+router.delete("/api/delete/movies/:id", authenticate, authorizeAdmin, function(req, res) {
     const movieId = req.params.id;
 
     // First, delete related records in other tables
@@ -107,7 +107,7 @@ router.delete("/api/delete/movies/:id", authenticateToken, authorizeRole(1), fun
 });
 
 // API to delete an episode
-router.delete("/api/admin/episodes/:id", authenticateToken, authorizeRole(1), function(req, res) {
+router.delete("/api/admin/episodes/:id", authenticate, authorizeAdmin, function(req, res) {
     const episodeId = req.params.id;
 
     db.query("DELETE FROM episodes WHERE id = ?", [episodeId], function(err, result) {
@@ -117,7 +117,7 @@ router.delete("/api/admin/episodes/:id", authenticateToken, authorizeRole(1), fu
 });
 
 // API to update a movie
-router.put("/api/admin/movies/:id", authenticateToken, authorizeRole(1), function(req, res) {
+router.put("/api/admin/movies/:id", authenticate, authorizeAdmin, function(req, res) {
     const movieId = req.params.id;
     const updatedMovie = {
         name: req.body.name,
@@ -151,7 +151,7 @@ router.put("/api/admin/movies/:id", authenticateToken, authorizeRole(1), functio
 });
 
 // API to get movie details
-router.get("/api/admin/movies/:id", authenticateToken, authorizeRole(1), function(req, res) {
+router.get("/api/admin/movies/:id", authenticate, authorizeAdmin, function(req, res) {
     const movieId = req.params.id;
 
     db.query("SELECT * FROM movies WHERE id = ?", [movieId], function(err, movie) {

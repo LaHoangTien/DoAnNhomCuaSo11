@@ -5,9 +5,9 @@ var db = require("../../db");
 var cheerio = require("cheerio");
 var cron = require("node-cron");
 var { authenticateToken, authorizeRole } = require("../middlewares/authMiddleware");
-const {  authenticate, authorizeAdmin } = require("../middlewares/auth");
+const { authenticate, authorizeAdmin } = require("../middlewares/auth");
 
-router.get("/api/kkphim",authenticate, authorizeAdmin, function(req, res) {
+router.get("/api/kkphim", authenticate, authorizeAdmin, function (req, res) {
     res.render("admin/api_movies");
 });
 
@@ -39,38 +39,38 @@ async function addMovie(slug) {
             slug: movieData.slug,
             year: movieData.year,
             view: movieData.view,
-            poster_url:movieData.thumb_url,
+            poster_url: movieData.thumb_url,
             created_time: new Date(movieData.created.time),
             modified_time: new Date() // Sử dụng thời gian hiện tại
         };
 
         // Kiểm tra phim có trong CSDL chưa
-const [movieResults] = await db.promise().query("SELECT * FROM movies WHERE id = ?", [movie.id]);
+        const [movieResults] = await db.promise().query("SELECT * FROM movies WHERE id = ?", [movie.id]);
 
-if (movieResults.length === 0) {
-    // Chưa có phim → Thêm vào CSDL
-    await db.promise().query("INSERT INTO movies SET ?", movie);
-} else {
-    // Đã có phim → Kiểm tra cập nhật dữ liệu
-    const existingMovie = movieResults[0];
-    let shouldUpdate = false;
+        if (movieResults.length === 0) {
+            // Chưa có phim → Thêm vào CSDL
+            await db.promise().query("INSERT INTO movies SET ?", movie);
+        } else {
+            // Đã có phim → Kiểm tra cập nhật dữ liệu
+            const existingMovie = movieResults[0];
+            let shouldUpdate = false;
 
-    // Kiểm tra xem có dữ liệu nào thay đổi không
-    if (existingMovie.type !== movie.type || 
-        existingMovie.status !== movie.status || 
-        existingMovie.episode_current !== movie.episode_current) {
-        shouldUpdate = true;
-    }
+            // Kiểm tra xem có dữ liệu nào thay đổi không
+            if (existingMovie.type !== movie.type ||
+                existingMovie.status !== movie.status ||
+                existingMovie.episode_current !== movie.episode_current) {
+                shouldUpdate = true;
+            }
 
-    if (shouldUpdate) {
-        await db.promise().query(
-            "UPDATE movies SET type = ?, status = ?, episode_current = ?, modified_time = ? WHERE id = ?",
-            [movie.type, movie.status, movie.episode_current, movie.modified_time, movie.id]
-        );
-    }
-}
+            if (shouldUpdate) {
+                await db.promise().query(
+                    "UPDATE movies SET type = ?, status = ?, episode_current = ?, modified_time = ? WHERE id = ?",
+                    [movie.type, movie.status, movie.episode_current, movie.modified_time, movie.id]
+                );
+            }
+        }
 
-let newEpisodesAdded = false;
+        let newEpisodesAdded = false;
 
         // Kiểm tra và thêm các tập phim vào cơ sở dữ liệu
         const episodes = response.data.episodes; // Lấy danh sách episodes từ API
@@ -85,7 +85,7 @@ let newEpisodesAdded = false;
                                 "SELECT * FROM episodes WHERE movie_id = ? AND name = ? AND server_name = ?",
                                 [movie.id, ep.name, episode.server_name]
                             );
-        
+
                             if (episodeResults.length === 0) {
                                 var episodeData = {
                                     movie_id: movie.id,
@@ -96,7 +96,7 @@ let newEpisodesAdded = false;
                                     link_embed: ep.link_embed,
                                     link_m3u8: ep.link_m3u8
                                 };
-        
+
                                 await db.promise().query("INSERT INTO episodes SET ?", episodeData);
                                 newEpisodesAdded = true;
                             }
@@ -111,7 +111,7 @@ let newEpisodesAdded = false;
         } else {
             console.warn("⚠️ Không có tập phim nào trong API!");
         }
-        
+
         // Cập nhật modified_time nếu phim đã tồn tại và có tập mới được thêm vào
         if (movieResults.length > 0 && newEpisodesAdded) {
             await db.promise().query("UPDATE movies SET modified_time = ? WHERE id = ?", [new Date(), movie.id]);
@@ -179,48 +179,48 @@ let newEpisodesAdded = false;
     }
 }
 
-// Hẹn giờ để thêm phim từ API mỗi ngày vào lúc 2 giờ sáng
-// cron.schedule('48 8 * * *', async () => {
-//     console.log('⏰ Running scheduled task to add/update movies from API (pages 1-6)');
-    
-//     try {
-//         for (let page = 1; page <= 6; page++) {
-//             console.log(`📄 Fetching movies from page ${page}...`);
-//             const response = await axios.get(`https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=${page}`);
-//             const movies = response.data.items;
+// Hẹn giờ để thêm phim từ API
+cron.schedule('30 22 * * *', async () => {
+    console.log('⏰ Running scheduled task to add/update movies from API (pages 1-6)');
 
-//             if (!movies || movies.length === 0) {
-//                 console.warn(`⚠️ No movies found on page ${page}`);
-//                 continue; // Bỏ qua nếu không có phim nào trên trang này
-//             }
+    try {
+        for (let page = 1; page <= 6; page++) {
+            console.log(`📄 Fetching movies from page ${page}...`);
+            const response = await axios.get(`https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=${page}`);
+            const movies = response.data.items;
 
-//             for (const movie of movies) {
-//                 await addMovie(movie.slug);
-//             }
-//         }
-//     } catch (error) {
-//         console.error('❌ Error fetching movie list from API:', error);
-//     }
-// });
+            if (!movies || movies.length === 0) {
+                console.warn(`⚠️ No movies found on page ${page}`);
+                continue; // Bỏ qua nếu không có phim nào trên trang này
+            }
 
-// // Hẹn giờ để cập nhật các phim hiện có trong cơ sở dữ liệu mỗi ngày vào lúc 3 giờ sáng
-// cron.schedule('51 8 * * *', async () => {
-//     console.log('⏰ Running scheduled task to update existing movies from database');
-//     try {
-//         const [movies] = await db.promise().query("SELECT slug FROM movies WHERE status != 'completed'");
+            for (const movie of movies) {
+                await addMovie(movie.slug);
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error fetching movie list from API:', error);
+    }
+});
 
-//         // Chạy cập nhật song song
-//         await Promise.all(movies.map(movie => addMovie(movie.slug)));
+// // Hẹn giờ để cập nhật các phim hiện có trong cơ sở dữ liệu
+cron.schedule('34 22 * * *', async () => {
+    console.log('⏰ Running scheduled task to update existing movies from database');
+    try {
+        const [movies] = await db.promise().query("SELECT slug FROM movies WHERE status != 'completed'");
 
-//         console.log('✅ All movies updated successfully');
-//     } catch (error) {
-//         console.error('❌ Error updating movies from database:', error);
-//     }
-// });
+        // Chạy cập nhật song song
+        await Promise.all(movies.map(movie => addMovie(movie.slug)));
+
+        console.log('✅ All movies updated successfully');
+    } catch (error) {
+        console.error('❌ Error updating movies from database:', error);
+    }
+});
 
 
 
-router.post("/api/kkphim/add/:slug",authenticate, authorizeAdmin, async function (req, res) {
+router.post("/api/kkphim/add/:slug", authenticate, authorizeAdmin, async function (req, res) {
     const slug = req.params.slug;
     await addMovie(slug);
     res.json({ success: true, message: "Movie added/updated successfully" });
